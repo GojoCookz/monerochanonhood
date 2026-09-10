@@ -39,7 +39,7 @@ let live = null
 let sim = null
 let simTimer = null
 let me = null // { address, rank, xmr, kind }
-let view = 'top'
+let view = 'reserve'
 let targetKey = null
 let wheelOffset = 0
 
@@ -88,7 +88,7 @@ function lookup(address) {
   return { address, kind: 'zero', rank: null, xmr: 0 }
 }
 
-function setMe(address, { persist = true } = {}) {
+function setMe(address, { persist = true, focusView = true } = {}) {
   const found = lookup(address)
   me = found
   if (persist) {
@@ -116,8 +116,14 @@ function setMe(address, { persist = true } = {}) {
     const pct = ((found.rank / data().totals.wallets) * 100).toFixed(1)
     els.findMsg.textContent = `You are #${found.rank} of ${data().totals.wallets} — top ${pct}% of Monero wallets on this chain.`
     els.views.hidden = false
-    view = 'me'
+    view = focusView ? 'me' : 'reserve'
+    wheelOffset = 0
     syncViewButtons()
+    const personal=document.querySelector('.mission-personal')
+    if(personal){
+      personal.querySelector('summary').textContent=`Your wallet · #${found.rank}`
+      if(focusView)personal.open=false
+    }
   }
   render(data())
 }
@@ -125,11 +131,14 @@ function setMe(address, { persist = true } = {}) {
 function clearMe() {
   me = null
   targetKey = null
-  view = 'top'
+  view = 'reserve'
+  wheelOffset = 0
   els.findMsg.textContent = ''
   els.findMsg.removeAttribute('data-tone')
   els.views.hidden = true
   els.addr.value = ''
+  const personal=document.querySelector('.mission-personal summary')
+  if(personal)personal.textContent='Find your wallet'
   try {
     localStorage.removeItem(STORE_KEY)
   } catch {}
@@ -233,7 +242,12 @@ function buildRows(d) {
   list.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
   const anchor = sim || view==='reserve' ? list.findIndex(r=>r.us) : view==='me' ? list.findIndex(r=>r.me) : 2
   const center = Math.max(0,Math.min(list.length-1,Math.max(0,anchor)+wheelOffset))
-  els.rows.style.paddingTop = `${Math.max(0,2-center)*52}px`
+  const previousButton=document.querySelector('.wheel-controls [data-step="-1"]')
+  const nextButton=document.querySelector('.wheel-controls [data-step="1"]')
+  if(previousButton)previousButton.disabled=center===0
+  if(nextButton)nextButton.disabled=center===list.length-1
+  const rowHeight=Number.parseFloat(getComputedStyle(els.board).getPropertyValue('--row-h'))||52
+  els.rows.style.paddingTop = `${Math.max(0,2-center)*rowHeight}px`
   return list.slice(Math.max(0,center-2),center+3).slice(0,5)
 }
 
@@ -269,7 +283,8 @@ function renderRows(d) {
     if (targetable) {
       el.tabIndex = 0
       el.setAttribute('role', 'button')
-      el.setAttribute('aria-label', `What it costs to pass rank ${r.rank}`)
+      el.removeAttribute('aria-label')
+      el.title = 'Inspect the balance gap to this holder'
     } else {
       el.removeAttribute('tabindex')
       el.setAttribute('role', 'listitem')
@@ -321,7 +336,7 @@ function renderRows(d) {
 /** She follows the user once they identify themselves — it is their moment.
  *  With no address, she rides our reserve row. One character, one focus. */
 function climberRow() {
-  return sim ? els.rows.querySelector('.row--us') : els.rows.querySelector('.row--me') ?? els.rows.querySelector('.row--us')
+  return sim || view==='reserve' ? els.rows.querySelector('.row--us') : els.rows.querySelector('.row--me') ?? els.rows.querySelector('.row--us')
 }
 
 function positionClimber() {
@@ -332,7 +347,7 @@ function positionClimber() {
   }
   els.climber.hidden = false
 
-  const perched = row.classList.contains('row--me')
+  const perched = !sim && view==='me' && row.classList.contains('row--me')
   els.climber.dataset.mode = perched ? 'perch' : 'hang'
 
   const art = els.climber.querySelector('.climber__art')
@@ -562,7 +577,8 @@ els.views.addEventListener('click', (e) => {
   targetKey = null
   syncViewButtons()
   render(data())
-  els.board.scrollIntoView({ block: 'start', behavior: 'auto' })
+  const personal=document.querySelector('.mission-personal')
+  if(personal)personal.open=false
   els.findMsg.textContent = view === 'me'
     ? `Showing neighbours around #${me.rank} — ${shortAddr(me.address)}.`
     : `Showing the top ${TOP_ROWS} holders. Switch to Around me for your wallet.`
@@ -585,8 +601,15 @@ async function load() {
     const res = await fetch('/api/climb', { cache: 'no-store' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     live = await res.json()
+    els.simBtn.disabled=false
+    const followButton=document.querySelector('.wheel-controls [data-step="0"]')
+    if(followButton)followButton.disabled=false
     renderReserve(live)
-    if (me) me = lookup(me.address) // re-rank on every refresh
+    if (me) {
+      me = lookup(me.address) // re-rank the saved address on every refresh
+      const summary=document.querySelector('.mission-personal summary')
+      if(summary)summary.textContent=me?.kind==='wallet'?`Your wallet · #${me.rank}`:'Find your wallet'
+    }
     if (!sim) render(live)
   } catch {
     els.status.dataset.state = 'error'
@@ -605,6 +628,9 @@ function stopSim() {
   clearTimeout(simTimer)
   simTimer = null
   sim = null
+  view = 'reserve'
+  wheelOffset = 0
+  syncViewButtons()
   els.board.dataset.sim = 'false'
   els.simBtn.setAttribute('aria-pressed', 'false')
   els.simBtn.textContent = 'Preview the climb'
@@ -689,12 +715,15 @@ window.addEventListener('track-reserve',()=>{
 
 const wheelControls=document.createElement('div')
 wheelControls.className='wheel-controls'
-wheelControls.innerHTML='<button type="button" data-step="-1" aria-label="Previous wallet">↑</button><button type="button" data-step="0">Follow position</button><button type="button" data-step="1" aria-label="Next wallet">↓</button>'
+wheelControls.innerHTML='<button type="button" data-step="-1" aria-label="Previous wallet">↑</button><button type="button" data-step="0">Follow reserve</button><button type="button" data-step="1" aria-label="Next wallet">↓</button>'
 els.board.after(wheelControls)
+els.simBtn.disabled=true
+for(const button of wheelControls.querySelectorAll('button'))button.disabled=true
 wheelControls.addEventListener('click',e=>{
   const button=e.target.closest('button')
   if (!button) return
   wheelOffset=Number(button.dataset.step)===0 ? 0 : wheelOffset+Number(button.dataset.step)
+  if(Number(button.dataset.step)===0){view='reserve';syncViewButtons()}
   render(data())
 })
 
@@ -706,7 +735,7 @@ load().then(() => {
     const saved = localStorage.getItem(STORE_KEY)
     if (saved && isAddr(saved)) {
       els.addr.value = saved
-      setMe(saved, { persist: false })
+      setMe(saved, { persist: false, focusView: false })
     }
   } catch {}
 })

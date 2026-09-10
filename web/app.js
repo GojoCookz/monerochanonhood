@@ -1,11 +1,12 @@
 // Screens reuse the live Climb DOM so address state and listeners survive navigation.
+import { mountMission } from './mission.js'
 const main = document.querySelector('main')
 // Project token/distributor addresses have not been supplied. Never substitute
 // the XMR pair token's volume, or infer completed payouts from tax estimates.
 const mobileTotals=document.createElement('aside')
 mobileTotals.className='mobile-totals'
 mobileTotals.setAttribute('aria-label','Project lifetime totals')
-mobileTotals.innerHTML='<div><span>Total trading volume</span><strong aria-label="Volume unavailable">—</strong></div><a href="#dividends"><span>XMR paid to holders</span><strong aria-label="Payout total unavailable">— <small>XMR</small></strong></a><p>Awaiting project token and distributor addresses</p>'
+mobileTotals.innerHTML='<div><span>Total trading volume</span><strong>—</strong></div><a href="#dividends"><span>XMR paid to holders</span><strong>— <small>XMR</small></strong></a><p>Awaiting project token and distributor addresses</p>'
 document.querySelector('.brand').after(mobileTotals)
 const reserve = document.createElement('section')
 reserve.id = 'screen-reserve'
@@ -16,8 +17,11 @@ const dividends = document.createElement('section')
 dividends.id = 'screen-dividends'
 dividends.className = 'app-screen'
 const hero = document.querySelector('.hero')
-hero.querySelector('h1').innerHTML = 'Stack XMR.<br>Follow the climb.'
-hero.querySelector('.primary-link').textContent = 'Enter The Climb →'
+hero.querySelector('.eyebrow').textContent = 'YOU’RE INVITED TO THE CLIMB.'
+hero.querySelector('h1').innerHTML = 'One reserve.<br>One shared climb.'
+hero.querySelector('.hero__copy > p:not(.eyebrow)').textContent = 'Join Monerochan’s mission to reach the top of Hood’s XMR holder board. One community following one reserve. No purchase needed to explore.'
+hero.querySelector('.primary-link').textContent = 'Enter the world →'
+hero.querySelector('.primary-link').id = 'enter-world'
 hero.querySelector('.primary-link').href = '#climb'
 hero.querySelector('img').src = '/assets/monerochan-perch-raw.png'
 hero.querySelector('img').alt = 'Monerochan sitting on a silver ledge and pointing toward the app controls'
@@ -50,6 +54,7 @@ document.body.append(nav)
 const sim = document.querySelector('.sim')
 climb.insertBefore(sim, document.querySelector('#board'))
 document.querySelector('.sim__hint').textContent = 'Illustrative motion preview'
+mountMission(climb)
 document.querySelector('.brand a').href = '#reserve'
 document.querySelector('.site-footer a').href = '#reserve'
 const screens = { reserve, climb, dividends }

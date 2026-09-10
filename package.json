@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "node tools/build.mjs",
-    "test": "node --test test/deployment.test.mjs",
+    "test": "node --test test/deployment.test.mjs test/mission.test.mjs",
     "start": "node server/serve.mjs",
     "snapshot": "node server/snapshot.mjs",
     "check": "node tools/check.mjs",

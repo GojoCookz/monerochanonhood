@@ -1,0 +1,52 @@
+.mission-card { border:1px solid #78502d; border-radius:16px; padding:13px 14px; margin:14px 0 10px; background:linear-gradient(120deg,#302010,#131416); }
+.mission-title { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.mission-title strong { font-size:14px; color:#f4eadf; }
+.mission-title > span { color:#ffb26b; font:11px var(--font-num); }
+.mission-reading { display:flex; justify-content:space-between; gap:10px; align-items:baseline; margin-top:10px; font-variant-numeric:tabular-nums; }
+#mission-rank { font:700 21px var(--font-num); color:#ffb46f; }
+#mission-balance { font:12px var(--font-num); color:#e6d5c4; }
+#mission-next { font-size:12px; margin:7px 0 11px; color:#d3c3b2; }
+#mission-checkpoints { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; padding:0; margin:0; list-style:none; }
+#mission-checkpoints li { padding:7px 2px; border:1px solid #4a3b2c; border-radius:6px; color:#b8ad9f; font-size:10px; text-align:center; }
+#mission-checkpoints li[data-reached=true] { color:#171009; background:#ff9a40; border-color:#ff9a40; }
+#mission-source { color:#bbb0a3; font-size:9px; margin:8px 0 0; }
+.mission-tools { display:grid; grid-template-columns:1fr 1fr; gap:8px; position:relative; z-index:8; margin:10px 0; }
+.mission-personal > summary,.mission-tools .sim__btn { padding:12px 9px; font:700 12px var(--font-ui); border:1px solid #694323; border-radius:9px; min-height:44px; color:#ffbf85; cursor:pointer; background:#201a14; }
+.mission-personal > summary { list-style:none; text-align:center; }
+.mission-personal > summary::-webkit-details-marker { display:none; }
+.mission-personal[open] > summary { color:#fff; border-color:#ff9a40; }
+.mission-personal .wallet-input-panel { position:absolute; top:50px; left:0; right:0; background:#16171b; border:1px solid #78502d; border-radius:12px; box-shadow:0 12px 28px #0009; padding:14px; }
+.mission-personal .find { margin-top:0; }
+.mission-personal .find__label { color:#d3c3b2; }
+.mission-tools .sim { display:block; padding:0; }
+.mission-tools .sim__btn { width:100%; letter-spacing:0; text-transform:none; }
+.mission-tools .sim__hint { display:none; }
+.mission-tools .sim__btn[aria-pressed=true] { background:#ff8b28; color:#171009; }
+.mission-more { border-top:1px solid #4b3423; margin-top:14px; padding-top:4px; }
+.mission-more > summary { min-height:48px; padding:14px 0; cursor:pointer; font-size:13px; color:#e7d4c1; }
+.mission-more > p { color:#bcb2a8; font-size:12px; }
+#mission-observations { list-style:none; margin:12px 0; padding:0; }
+#mission-observations li { padding:10px 0; border-bottom:1px solid #332b23; font-size:12px; color:#dbc9b6; }
+#mission-observations time { display:block; font-size:10px; color:#b8aa9a; margin-bottom:5px; }
+#clear-observations { min-height:44px; padding:10px 14px; background:#201a14; color:#ffbf85; border:1px solid #694323; border-radius:8px; cursor:pointer; }
+.mission-personal > summary:focus-visible,.mission-more > summary:focus-visible,#clear-observations:focus-visible { outline:2px solid #ffbd80; outline-offset:3px; }
+.mission-personal > summary:hover,#clear-observations:hover { background:#332519; }
+.wheel-controls button:disabled,.mission-tools .sim__btn:disabled { opacity:.4; cursor:default; background:#171717; }
+.mission-more .facts { margin-bottom:16px; }
+.mission-more .facts > div:nth-child(n+3) { display:block; }
+.hero h1 { letter-spacing:-.04em; }
+.hero-invitation { color:#ffbd80; font-size:12px; margin-top:10px; }
+@media(max-width:749px){
+ body[data-screen=climb] main { padding-top:10px; }
+ body[data-screen=climb] .brand { margin-bottom:8px; }
+ body[data-screen=climb] .mobile-totals { margin-bottom:12px; }
+ body[data-screen=climb] .climb__title { font-size:28px; }
+ body[data-screen=climb] .climb__lede { font-size:11px; margin-top:6px; }
+ .mission-card { margin-top:10px; padding:11px 12px; }
+ .mission-reading { margin-top:7px; }
+ .mission-tools { margin:8px 0; }
+ .board { --row-h:46px; height:242px; }
+ .board .row { min-height:46px; height:46px; }
+ .board__rows { min-height:230px; }
+ .mission-more .facts small { display:block; }
+}

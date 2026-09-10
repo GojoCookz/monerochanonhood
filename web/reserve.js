@@ -1,4 +1,7 @@
+import { renderMission } from './mission.js'
+
 export function renderReserve(snapshot) {
+  renderMission(snapshot)
   const reserve=snapshot.reserve
   if (!reserve?.address) return
   const panel=document.querySelector('.treasury')
@@ -19,5 +22,5 @@ export function renderReserve(snapshot) {
 }
 
 document.addEventListener('click',event=>{
-  if(event.target.closest('#track-reserve'))window.dispatchEvent(new Event('track-reserve'))
+  if(event.target.closest('#track-reserve, #enter-world'))window.dispatchEvent(new Event('track-reserve'))
 })

@@ -2,6 +2,14 @@
 
 An interactive, pre-launch XMR treasury concept for Robinhood Chain. The interface includes Reserve, The Climb and Dividends screens, character artwork, a compact holder leaderboard and an illustrative dividend calculator.
 
+## The shared Climb
+
+The entrance frames a shared mission: one community following its reserve toward the top of the selected XMR holder board. Opening the world centres the reserve; personal wallet lookup remains a separate, preserved view.
+
+Checkpoints (listed, top 10, top 3, first place) come from the current reserve rank. They can become incomplete again if rank falls. A goal is not a claim that it has been reached. Motion previews remain labelled simulation and never change the live mission panel or journal.
+
+The expedition journal stores up to 20 changed balance/rank observations in this browser's local storage. It is device-local, not a shared event index or transaction proof. Clearing it offers an undo. The dividend calculator, artwork, background rain, umbrella reveal, market sources and five-row wallet wheel remain available.
+
 ## Run locally
 
 Requires Node.js 20 or later and npm. Explorer requests use the cross-platform `impit` client; no PowerShell process is required.
@@ -32,9 +40,11 @@ npm run build
 npm test
 ```
 
-Live site: https://monerochanonhood.vercel.app/
+Current production project: `gojocookzs-projects/monerochanonhood-uhfm`.
+Direct project URL: https://monerochanonhood-uhfm.vercel.app/
+Custom domain: https://www.monerochan.world/ (apex redirects to www).
 
-Custom domain `monerochan.world` is attached to the Vercel project. At the domain provider, set an A record for `@` to `76.76.21.21` (Vercel's domain-specific instruction when attached). Domain activation depends on DNS propagation and Vercel verification; the Vercel URL remains available meanwhile.
+Both `monerochan.world` and `www.monerochan.world` are verified on this project. Namecheap is the DNS provider. At verification, public DNS returned apex A `216.198.79.1` and www CNAME `b3d55111ea8e7c15.vercel-dns-017.com`. Use the project's Vercel domain settings as the authority for future DNS changes. A router may retain an earlier negative answer even after public DNS is correct; the direct project URL is an independent fallback.
 
 ## Included
 
