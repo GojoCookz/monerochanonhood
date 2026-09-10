@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { fetchAllHolders, fetchMarketAddresses, fetchXmrPriceUsd } from './blockscout.mjs'
 import { RESERVE_ADDRESS, XMR } from './config.mjs'
+import { fetchReserveState } from './reserve.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DATA = path.join(ROOT, 'data')
@@ -28,10 +29,11 @@ async function readJson(file, fallback) {
 export async function buildSnapshot({ persist = true, previous = null } = {}) {
   const startedAt = Date.now()
 
-  const [{ holders, pages }, { market, marketSource }, price] = await Promise.all([
+  const [{ holders, pages }, { market, marketSource }, price, reserveState] = await Promise.all([
     fetchAllHolders(),
     fetchMarketAddresses(),
     fetchXmrPriceUsd(),
+    fetchReserveState(),
   ])
 
   const wallets = []
@@ -113,7 +115,11 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
       address: RESERVE_ADDRESS,
       deployed: Boolean(RESERVE_ADDRESS),
       rank: us?.rank ?? null,
-      xmr: us?.xmr ?? 0,
+      xmr: reserveState.raw !== null ? toXmr(reserveState.raw) : us?.xmr ?? null,
+      raw: reserveState.raw ?? us?.raw ?? null,
+      accountType: reserveState.accountType,
+      balanceCheckedAt: reserveState.checkedAt,
+      balanceSource: reserveState.raw !== null ? 'explorer-token-balances' : us ? 'holder-snapshot' : null,
       delta: us?.delta ?? null,
     },
     // The gap to the rung directly above us is the call to action.

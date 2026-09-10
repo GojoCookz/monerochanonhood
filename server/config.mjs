@@ -16,10 +16,9 @@ export const XMR = '0x38F728351fd9565087a4fF0ad5049739e0Ce235c'
 // This is the market, not a wallet. Never ranked.
 export const POOL_MANAGER = '0x8366a39CC670B4001A1121B8F6A443A643e40951'
 
-// Our XMR reserve wallet.
-// null until the token is deployed. The UI renders a pre-launch state when null.
-// DO NOT put a placeholder address here - an unranked truth beats a fake rank.
-export const RESERVE_ADDRESS = null
+// Project-supplied reserve wallet, published by the owner in this project thread.
+// This config does not assert multisig custody or a deployed dividend contract.
+export const RESERVE_ADDRESS = '0x25D58Dcf6510F5D91a7De0f5246d6D9E74CD8fb1'
 
 // Refresh cadence. A full holder crawl is 8 paginated calls / ~34s measured,
 // so this must never run on the request path.

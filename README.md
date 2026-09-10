@@ -34,6 +34,8 @@ npm test
 
 Live site: https://monerochanonhood.vercel.app/
 
+Custom domain `monerochan.world` is attached to the Vercel project. At the domain provider, set an A record for `@` to `76.76.21.21` (Vercel's domain-specific instruction when attached). Domain activation depends on DNS propagation and Vercel verification; the Vercel URL remains available meanwhile.
+
 ## Included
 
 - `web/` — app screens, mobile navigation, five-row holder wheel, wallet lookup, calculator and decorative rain.
@@ -50,9 +52,11 @@ The selected pair asset is the ERC-20 at `0x38F728351fd9565087a4fF0ad5049739e0Ce
 
 The leaderboard uses paginated explorer snapshots and filters known liquidity-pool addresses found in a DEX listing. It is not a block-atomic snapshot or a complete classification of every contract, and it is not a leaderboard of native Monero holders. USD figures are reference estimates, not executable quotes.
 
-Project token, reserve and distributor addresses have not been supplied. Consequently:
+Project reserve wallet: `0x25D58Dcf6510F5D91a7De0f5246d6D9E74CD8fb1`. The API reads its selected-XMR token balance and account type from the explorer. A successful empty token-balance response is zero; a failed request is unavailable. The address was supplied by the project owner; multisig custody has not been established.
 
-- Reserve holdings and project trading/payout totals remain explicitly unconnected.
+Project token and distributor addresses have not been supplied. Consequently:
+
+- Reserve holdings are connected; project trading/payout totals remain explicitly unconnected.
 - No token trading, custody or dividend distribution contracts are deployed by this repository.
 - The animated climb preview is labelled simulation.
 - The dividend calculator uses user-editable illustrative inputs, not promised returns.

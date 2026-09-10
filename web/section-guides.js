@@ -25,5 +25,7 @@ plan.append(planAction)
 receipts.querySelector('h2').textContent='She checks the receipts.'
 const receiptLesson=document.createElement('details')
 receiptLesson.className='guide-note'
-receiptLesson.innerHTML='<summary>What should a reserve receipt prove?</summary><div><p>A receipt should link to the actual transaction and identify the asset, amount, source and destination. A deposit is not automatically a market purchase, and a rank change is not proof of a buy.</p><p>The project reserve address is still unpublished. Until it is connected, this section does not claim any project transactions.</p><a href="https://robinhoodchain.blockscout.com/token/0x38F728351fd9565087a4fF0ad5049739e0Ce235c" target="_blank" rel="noopener">Inspect the selected XMR token ↗</a></div>'
+receiptLesson.innerHTML='<summary>What should a reserve receipt prove?</summary><div><p>A receipt should link to the actual transaction and identify the asset, amount, source and destination. A deposit is not automatically a market purchase, and a rank change is not proof of a buy.</p><p>The reserve wallet is published. Its address and current XMR balance appear in the reserve panel. A classified purchase and distribution history is still being connected.</p><a href="https://robinhoodchain.blockscout.com/token/0x38F728351fd9565087a4fF0ad5049739e0Ce235c" target="_blank" rel="noopener">Inspect the selected XMR token ↗</a></div>'
+receipts.querySelector('.receipt-empty strong').textContent='Reserve wallet published'
+receipts.querySelector('.receipt-empty p').textContent='Inspect the reserve address in the panel above. A classified transaction feed is not connected yet; no purchase or payout totals are inferred from its balance.'
 receipts.append(receiptLesson)

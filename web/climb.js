@@ -5,6 +5,8 @@
      stale is honest; a stale number labelled live is a lie.
    - Simulation mode is visibly marked and cannot be mistaken for real data. */
 
+import { renderReserve } from './reserve.js'
+
 const $ = (id) => document.getElementById(id)
 
 const els = {
@@ -45,7 +47,7 @@ const data = () => sim ?? live
 
 /* ---------- format ---------- */
 
-const fmtXmr = (n) => (n >= 1000 ? n.toFixed(1) : n.toFixed(4))
+const fmtXmr = (n) => (n == null ? '—' : n >= 1000 ? n.toFixed(1) : n.toFixed(4))
 const fmtUsd = (n) =>
   n == null ? '—' : n >= 1000 ? '$' + Math.round(n).toLocaleString('en-US') : '$' + n.toFixed(0)
 const shortAddr = (a) => `${a.slice(0, 6)}…${a.slice(-4)}`
@@ -229,7 +231,7 @@ function buildRows(d) {
   }
 
   list.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
-  const anchor = sim ? list.findIndex(r=>r.us) : view==='me' ? list.findIndex(r=>r.me) : 2
+  const anchor = sim || view==='reserve' ? list.findIndex(r=>r.us) : view==='me' ? list.findIndex(r=>r.me) : 2
   const center = Math.max(0,Math.min(list.length-1,Math.max(0,anchor)+wheelOffset))
   els.rows.style.paddingTop = `${Math.max(0,2-center)*52}px`
   return list.slice(Math.max(0,center-2),center+3).slice(0,5)
@@ -409,13 +411,13 @@ function renderFacts(d) {
 }
 
 function renderGap(d) {
-  if (me?.kind === 'wallet' && me.rank === 1) {
+  if (view !== 'reserve' && me?.kind === 'wallet' && me.rank === 1) {
     els.gap.hidden = false
     els.gap.innerHTML = '<div class="gap__label">Your position</div><div class="gap__big">Top of the board.</div><div class="gap__sub">You lead the current filtered holder snapshot.</div>'
     return
   }
   // When the visitor has identified themselves, the gap is THEIR gap.
-  if (!sim && me && me.kind !== 'pool') {
+  if (!sim && view !== 'reserve' && me && me.kind !== 'pool') {
     const idx = d.index ?? []
     const above = me.rank ? idx.find(([, rank]) => rank === me.rank - 1) : idx[idx.length - 1]
     const top10 = idx.find(([, rank]) => rank === 10)
@@ -456,7 +458,7 @@ function renderLadder(d) {
   // Say the target once, price it once.
   els.ladder.innerHTML = d.ladder
     .map((r) => {
-      const need = me ? Math.max(0, r.holderXmr - me.xmr) : r.needXmr
+      const need = !sim && view !== 'reserve' && me ? Math.max(0, r.holderXmr - me.xmr) : r.needXmr
       const done = need <= 0
       return `
       <li class="rung${done ? ' rung--done' : ''}">
@@ -583,6 +585,7 @@ async function load() {
     const res = await fetch('/api/climb', { cache: 'no-store' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     live = await res.json()
+    renderReserve(live)
     if (me) me = lookup(me.address) // re-rank on every refresh
     if (!sim) render(live)
   } catch {
@@ -675,6 +678,14 @@ function startSim() {
 }
 
 els.simBtn.addEventListener('click', () => (sim ? stopSim() : startSim()))
+
+window.addEventListener('track-reserve',()=>{
+  if(sim)stopSim()
+  view='reserve'
+  wheelOffset=0
+  syncViewButtons()
+  render(data())
+})
 
 const wheelControls=document.createElement('div')
 wheelControls.className='wheel-controls'

@@ -12,6 +12,7 @@ main { max-width:1000px; padding:20px 18px 110px; }
 .mobile-totals { display:none; }
 @media(max-width:749px){
   .brand { margin-bottom:12px; }
+  .treasury,.board,#find { scroll-margin-top:110px; }
   .mobile-totals { display:grid; grid-template-columns:1fr 1fr; position:sticky; top:0; z-index:20; margin:0 -18px 18px; padding:12px 18px 8px; border-top:1px solid #54351b; border-bottom:1px solid #54351b; background:#0f1114; gap:8px 16px; }
   .mobile-totals > div,.mobile-totals > a { min-width:0; }
   .mobile-totals > a { text-decoration:none; }
@@ -61,6 +62,7 @@ main { max-width:1000px; padding:20px 18px 110px; }
 .calc-notes { margin-top:24px; font-size:13px; color:var(--muted); }
 .calc-notes summary { padding:12px 0; cursor:pointer; color:var(--silver); }
 .site-footer { font-size:10px; }
+#reserve-address { display:block; color:#ffbb7a; font:11px var(--font-num); overflow-wrap:anywhere; line-height:1.7; padding:12px 0; }
 .board { --row-h:52px; height:278px; padding-bottom:0; overflow:hidden; border:1px solid #54321b; border-radius:18px; background:linear-gradient(#0e1015,#20160d 50%,#0e1015); }
 .board__rows { min-height:260px; }
 .board .row { height:52px; min-height:52px; }

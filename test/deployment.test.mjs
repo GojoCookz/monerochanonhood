@@ -2,6 +2,21 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 import { createSnapshotCache } from '../server/cached-snapshot.mjs'
+import { parseReserveBalance } from '../server/reserve.mjs'
+import { XMR } from '../server/config.mjs'
+
+test('reserve balance matches the contract address rather than ticker', () => {
+  assert.equal(parseReserveBalance([
+    { token: { address_hash: '0x0000000000000000000000000000000000000001', symbol: 'XMR' }, value: '999' },
+    { token: { address_hash: XMR.toLowerCase() }, value: '123456789' },
+  ]), '123456789')
+})
+
+test('empty successful balance list means zero; malformed response is not zero', () => {
+  assert.equal(parseReserveBalance([]), '0')
+  assert.throws(() => parseReserveBalance({ error: 'offline' }), /Invalid reserve/)
+  assert.throws(() => parseReserveBalance([{ token: { address_hash: XMR }, value: 'invalid' }]), /Invalid reserve/)
+})
 
 test('concurrent cold requests share one crawl and no filesystem persistence', async () => {
   let calls = 0
