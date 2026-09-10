@@ -1,7 +1,9 @@
 import { renderMission } from './mission.js'
+import { renderProject } from './project.js'
 
 export function renderReserve(snapshot) {
   renderMission(snapshot)
+  renderProject(snapshot)
   const reserve=snapshot.reserve
   if (!reserve?.address) return
   const panel=document.querySelector('.treasury')
@@ -18,7 +20,7 @@ export function renderReserve(snapshot) {
   const custody=panel.querySelector('.treasury__split article')
   custody.querySelector('p').textContent=reserve.accountType==='wallet' ? 'Standard wallet' : reserve.accountType==='contract' ? 'Contract account' : 'Custody unverified'
   custody.querySelector('small').textContent=reserve.accountType==='wallet' ? 'The explorer reports a non-contract account. Multisig custody is not established.' : 'Contract status alone does not establish a multisig threshold or signer policy.'
-  document.querySelector('.hero small').textContent='Reserve wallet published · token and dividend contracts not connected'
+  document.querySelector('.hero small').textContent=snapshot.project?.onchain?'Token live on Hood · XMR distributor connected':'Token and reserve published · reading distributor state'
 }
 
 document.addEventListener('click',event=>{

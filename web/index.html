@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/app.css" />
     <link rel="stylesheet" href="/section-guides.css" />
     <link rel="stylesheet" href="/mission.css" />
+    <link rel="stylesheet" href="/project.css" />
   </head>
   <body>
     <main>
@@ -32,24 +33,24 @@
           <h1 id="hero-title">An XMR treasury.<br>With a face.<br>And a following.</h1>
           <p>Monerochan’s plan: use trading fees to accumulate an XMR reserve on Hood and fund separate XMR distributions to holders.</p>
           <a class="primary-link" href="#treasury">Explore the reserve <span aria-hidden="true">↓</span></a>
-          <small>Reserve wallet published · token and dividend contracts not connected</small>
+          <small>Token and reserve published · reading contract state</small>
         </div>
       </section>
       <section class="treasury" id="treasury" aria-labelledby="treasury-title">
         <div class="treasury__heading"><div><p class="eyebrow">THE CORE OF THE PROJECT</p><h2 id="treasury-title">The reserve.</h2></div><span class="phase">PRE-LAUNCH</span></div>
         <div class="reserve-total"><span>XMR HELD BY THE RESERVE</span><strong>Loading balance…</strong><p>Reading the project’s published reserve wallet.</p><a id="reserve-address" hidden target="_blank" rel="noopener"></a><a id="track-reserve" class="guide-action" href="#climb">Find the reserve on the board →</a></div>
-        <div class="treasury__split"><article><h3>Reserve custody</h3><p>Checking account type…</p><small>Custody information will reflect the explorer response.</small></article><article><h3>Holder distributions</h3><p>Separate from the reserve</p><small>Distribution contract, eligibility and claim method awaiting publication.</small></article></div>
-        <details class="treasury-policy"><summary>What does holding Monerochan give me?</summary><p>Holder distributions are planned. Treasury ownership, redemption rights and a guaranteed price floor have not been established. The selected XMR token on Hood is an ERC-20 asset; its backing and redemption route still need independent verification.</p></details>
+        <div class="treasury__split"><article><h3>Reserve custody</h3><p>Checking account type…</p><small>Custody information will reflect the explorer response.</small></article><article><h3>Holder distributions</h3><p>Separate from the reserve</p><small>Reading the token’s distributor. See Dividends for its current ledger.</small></article></div>
+        <details class="treasury-policy"><summary>What does holding Monerochan give me?</summary><p>Holder distributions follow the linked distributor’s rules. Treasury ownership, redemption rights and a guaranteed price floor have not been established. The selected XMR token on Hood is an ERC-20 asset; its backing and redemption route still need independent verification.</p></details>
       </section>
       <section class="thesis" aria-labelledby="thesis-title">
         <p class="eyebrow">THE PLAN</p>
         <h2 id="thesis-title">The mascot gets your attention.<br>The reserve gives you something to follow.</h2>
         <div class="mechanics">
-          <article><h3>Accumulate</h3><p>A planned 1% of eligible buy and sell volume funds the XMR reserve. Its published address will show what it actually holds.</p></article>
-          <article><h3>Distribute</h3><p>Holder dividends are planned in the selected XMR token on Hood. Distribution rules and the final fee allocation are still to be published.</p></article>
+          <article><h3>Accumulate</h3><p>The team-designated reserve wallet accumulates XMR with rewards. Its published address shows what it actually holds.</p></article>
+          <article><h3>Distribute</h3><p>The token has a dividend distributor. Its recorded credits and completed payouts appear separately on the Dividends screen.</p></article>
           <article><h3>Follow the climb</h3><p>See the reserve alongside other holders. Look up your own wallet and explore the balance gaps between positions.</p></article>
         </div>
-        <p class="plan-note">Proposed trading fees: 3% buy / 3% sell. Remaining allocation between dividends and marketing awaits confirmation.</p>
+        <p class="plan-note">Reading the deployed fee configuration. See Dividends for contract sources.</p>
       </section>
       <section class="climb" id="climb" aria-labelledby="climb-title">
         <header class="climb__head">

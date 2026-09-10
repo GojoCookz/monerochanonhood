@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { fetchAllHolders, fetchMarketAddresses, fetchXmrPriceUsd } from './blockscout.mjs'
 import { RESERVE_ADDRESS, XMR } from './config.mjs'
 import { fetchReserveState } from './reserve.mjs'
+import { fetchProjectStats } from './project-stats.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DATA = path.join(ROOT, 'data')
@@ -28,12 +29,14 @@ async function readJson(file, fallback) {
 
 export async function buildSnapshot({ persist = true, previous = null } = {}) {
   const startedAt = Date.now()
+  const prev = persist ? await readJson(LATEST, null) : previous
 
-  const [{ holders, pages }, { market, marketSource }, price, reserveState] = await Promise.all([
+  const [{ holders, pages }, { market, marketSource }, price, reserveState, project] = await Promise.all([
     fetchAllHolders(),
     fetchMarketAddresses(),
     fetchXmrPriceUsd(),
     fetchReserveState(),
+    fetchProjectStats(prev?.project),
   ])
 
   const wallets = []
@@ -58,7 +61,6 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
     w.rank = i + 1
   })
 
-  const prev = persist ? await readJson(LATEST, null) : previous
   const prevRanks = new Map(
     (prev?.wallets ?? []).map((w) => [w.address.toLowerCase(), w.rank]),
   )
@@ -102,6 +104,7 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
     },
     token: { address: XMR, symbol: 'XMR', name: 'Monero', chainId: 4663 },
     price,
+    project,
     totals: {
       holderRows: holders.length,
       wallets: wallets.length,

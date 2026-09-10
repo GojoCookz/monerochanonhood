@@ -1,12 +1,13 @@
 // Screens reuse the live Climb DOM so address state and listeners survive navigation.
 import { mountMission } from './mission.js'
+import { mountProject } from './project.js'
 const main = document.querySelector('main')
-// Project token/distributor addresses have not been supplied. Never substitute
-// the XMR pair token's volume, or infer completed payouts from tax estimates.
+// The project module fills this strip from canonical-pool swaps and the token's
+// distributor. Never substitute pair-token volume or infer payouts from tax.
 const mobileTotals=document.createElement('aside')
 mobileTotals.className='mobile-totals'
 mobileTotals.setAttribute('aria-label','Project lifetime totals')
-mobileTotals.innerHTML='<div><span>Total trading volume</span><strong>—</strong></div><a href="#dividends"><span>XMR paid to holders</span><strong>— <small>XMR</small></strong></a><p>Awaiting project token and distributor addresses</p>'
+mobileTotals.innerHTML='<div><span>Total pool volume · XMR</span><strong>—</strong></div><a href="#dividends"><span>XMR paid to holders</span><strong>— <small>XMR</small></strong></a><p>Reading MONEROCHAN contract totals…</p>'
 document.querySelector('.brand').after(mobileTotals)
 const reserve = document.createElement('section')
 reserve.id = 'screen-reserve'
@@ -88,3 +89,4 @@ form.addEventListener('input',calculate)
 form.addEventListener('submit',e=>e.preventDefault())
 form.addEventListener('reset',()=>setTimeout(calculate,0))
 calculate()
+mountProject()
