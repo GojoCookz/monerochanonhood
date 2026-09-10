@@ -1,0 +1,57 @@
+[hidden] { display: none !important; }
+:root { --muted-dim: #a399ae; }
+body::before { opacity: .07; }
+.brand { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:36px; font-size:11px; letter-spacing:.1em; }
+.brand a { color:var(--silver); text-decoration:none; font-weight:700; }
+.brand span { color:var(--muted); font-size:9px; }
+.hero { display:grid; gap:24px; padding-bottom:52px; }
+.hero img { display:block; width:min(78vw,340px); height:auto; justify-self:center; border-radius:50%; }
+.eyebrow { font:700 10px var(--font-num); letter-spacing:.16em; color:var(--orange-hi); }
+.hero h1 { font-size:clamp(40px,10vw,66px); line-height:1; letter-spacing:-.055em; margin:18px 0; }
+.hero__copy > p:not(.eyebrow) { color:var(--muted); max-width:40ch; }
+.primary-link { display:flex; justify-content:space-between; padding:15px 18px; background:var(--orange); color:#08070a; text-decoration:none; font-weight:700; min-height:48px; }
+.primary-link:hover { background:var(--orange-hi); }
+a:focus-visible { outline:2px solid var(--orange-hi); outline-offset:4px; }
+.hero small { display:block; color:var(--muted); margin-top:12px; font-size:11px; }
+.thesis { border-top:1px solid var(--line); padding:26px 0 48px; }
+.thesis h2 { font-size:25px; letter-spacing:-.035em; line-height:1.2; }
+.mechanics { display:grid; gap:18px; }
+.mechanics article { border-left:2px solid var(--ember); padding-left:16px; }
+.mechanics h3 { margin:0 0 6px; font-size:18px; }
+.mechanics p,.plan-note { color:var(--muted); font-size:13px; }
+.mechanics p { margin:0; }
+.plan-note { margin:18px 0; }
+.find__input { font-size:16px; }
+.views__btn,.sim__btn,.target__x,.rules summary { min-height:44px; }
+.rules summary { display:flex; align-items:center; }
+.climb__foot a { color:var(--orange-hi); }
+#find { scroll-margin-top:20px; }
+.treasury { padding:28px 20px; border:1px solid var(--ember); margin-bottom:40px; background:linear-gradient(145deg,#211309,var(--ink-1) 65%); scroll-margin-top:20px; }
+.treasury__heading { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.treasury h2,.receipts h2 { margin:6px 0 22px; font-size:34px; letter-spacing:-.045em; line-height:1.1; }
+.phase { color:var(--orange-hi); font:10px var(--font-num); white-space:nowrap; }
+.reserve-total > span { font:10px var(--font-num); letter-spacing:.09em; color:var(--muted); }
+.reserve-total strong { display:block; font-size:clamp(27px,7vw,43px); letter-spacing:-.035em; margin:10px 0; }
+.reserve-total p,.treasury-policy p,.receipts > p,.receipt-empty p { font-size:13px; color:var(--muted); line-height:1.7; }
+.treasury__split { display:grid; gap:20px; border-top:1px solid var(--line); padding-top:20px; margin-top:24px; }
+.treasury__split h3 { font-size:12px; color:var(--muted); margin:0; }
+.treasury__split p { margin:8px 0; font-size:17px; }
+.treasury__split small { color:var(--muted); font-size:12px; }
+.treasury-policy { border-top:1px solid var(--line); margin-top:24px; padding-top:14px; }
+.treasury-policy summary { cursor:pointer; font-size:13px; min-height:44px; padding:10px 0; }
+.treasury-policy summary:focus-visible { outline:2px solid var(--orange); }
+.receipts { border-top:1px solid var(--line); padding-top:28px; margin-top:48px; }
+.receipt-empty { display:flex; gap:18px; padding:22px 0; border-top:1px dashed var(--ember); margin-top:24px; }
+.receipt-empty > span { color:var(--orange); font-size:30px; }
+.receipt-empty strong { font-size:15px; }
+.site-footer { border-top:1px solid var(--line); padding-top:22px; margin-top:40px; display:grid; gap:12px; }
+.site-footer a { color:var(--silver); text-decoration:none; font-size:13px; letter-spacing:.1em; }
+.site-footer span { color:var(--muted); font-size:11px; }
+@media(min-width:640px) { .treasury__split { grid-template-columns:1fr 1fr; } }
+@media(min-width:640px) {
+  .hero { grid-template-columns:1fr 1fr; align-items:center; gap:30px; }
+  .hero img { width:100%; grid-column:2; grid-row:1; }
+  .hero__copy { grid-column:1; grid-row:1; }
+  .hero h1 { font-size:46px; }
+  .mechanics { grid-template-columns:repeat(3,1fr); }
+}

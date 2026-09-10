@@ -1,0 +1,20 @@
+.has-guide { position:relative; isolation:isolate; }
+.section-guide { position:absolute; top:8px; right:0; width:120px; height:160px; object-fit:contain; object-position:top; pointer-events:none; }
+.treasury .section-guide { right:8px; top:8px; width:112px; height:150px; }
+.has-guide > .eyebrow,.treasury__heading { padding-right:118px; }
+.treasury__heading { min-height:135px; display:block; }
+.treasury__heading .phase { display:block; margin-top:8px; }
+.thesis.has-guide > h2,.receipts.has-guide > h2 { padding-right:112px; min-height:116px; font-size:25px; line-height:1.18; }
+.has-guide > .eyebrow { font-size:9px; line-height:1.7; }
+.guide-note { margin:20px 0; border:1px solid #674322; border-radius:12px; background:#1e1711; }
+.guide-note summary { cursor:pointer; padding:15px 12px; font-size:13px; color:#ffc38a; min-height:48px; }
+.guide-note > div { padding:0 14px 16px; font-size:13px; color:#bdb5ae; line-height:1.65; }
+.guide-note a,.guide-action { color:#ffb878; display:inline-flex; align-items:center; min-height:44px; font-size:13px; }
+.guide-action { border-bottom:1px solid #71451e; text-decoration:none; }
+.guide-note summary:focus-visible,.guide-action:focus-visible { outline:2px solid #ffaf66; outline-offset:3px; }
+@media(min-width:750px){
+ .section-guide,.treasury .section-guide { width:180px;height:210px;right:16px; }
+ .has-guide > .eyebrow,.treasury__heading { padding-right:205px; }
+ .thesis.has-guide > h2,.receipts.has-guide > h2 { padding-right:210px;min-height:140px;font-size:32px; }
+ .treasury__heading { min-height:170px; }
+}

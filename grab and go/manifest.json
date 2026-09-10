@@ -1,0 +1,82 @@
+[
+  {
+    "file": "01-x-profile-500.png",
+    "width": 500,
+    "height": 500,
+    "bytes": 511539,
+    "source": "assets/pack-raw/01-x-profile-500.png",
+    "sourceSha256": "9015235ee026e9d2e9e2a77ff914d114f46a6fc4a11d33dcbd57e8dddaff8d1c"
+  },
+  {
+    "file": "02-x-dex-banner-1500x500.png",
+    "width": 1500,
+    "height": 500,
+    "bytes": 1438618,
+    "source": "assets/pack-raw/02-x-dex-banner-1500x500.png",
+    "sourceSha256": "29c5dc245d79199b79c715a7376c220ebb9176e146cf5c568c809011d8b35922"
+  },
+  {
+    "file": "03-reserve-guardian.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2529517,
+    "source": "assets/pack-raw/03-reserve-guardian.png",
+    "sourceSha256": "adff63d3fa0d9e1597cc130d61776c87c58f4fa5d0248f75919521b12b900246"
+  },
+  {
+    "file": "04-the-climb.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2765612,
+    "source": "assets/pack-raw/04-the-climb.png",
+    "sourceSha256": "377d9e235da9c01c273f5b74829f9d1b03f19ec2d13bc091b00f65732f2421e9"
+  },
+  {
+    "file": "05-orange-rain.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2834542,
+    "source": "assets/pack-raw/05-orange-rain.png",
+    "sourceSha256": "11fab72c46ac5d070c2540a9fddd2cc32daccbfdae3fbe69400e5ce6d6cd48ad"
+  },
+  {
+    "file": "06-check-the-receipts.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2572750,
+    "source": "assets/pack-raw/06-check-the-receipts.png",
+    "sourceSha256": "fe631bfca3dea21aad61f486a52f8ee17ca8f019dcefcbd2532b4cf9c73c9393"
+  },
+  {
+    "file": "07-night-shift.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2376090,
+    "source": "assets/pack-raw/07-night-shift.png",
+    "sourceSha256": "eb6cb416b63b7bb8906002d73259bf73316a3e4da17abba4d3c6c719236942c5"
+  },
+  {
+    "file": "08-community-signal.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2536156,
+    "source": "assets/pack-raw/08-community-signal.png",
+    "sourceSha256": "cccdc702ed7107bf15411adbdd4ce614ecf9f736445566b76a229e0aac213e65"
+  },
+  {
+    "file": "09-privacy-culture.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2718578,
+    "source": "assets/pack-raw/09-privacy-culture.png",
+    "sourceSha256": "11709a59fbcdbd6ccf803ad00aa5bb259bacc5e6839cd3cb005bfead2b284de1"
+  },
+  {
+    "file": "10-new-horizon.png",
+    "width": 1080,
+    "height": 1080,
+    "bytes": 2694021,
+    "source": "assets/pack-raw/10-new-horizon.png",
+    "sourceSha256": "238c0e5ecfcfea30daded01acb88592ce876d69c0522f21de6c1aa15c0844510"
+  }
+]

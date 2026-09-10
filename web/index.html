@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>THE CLIMB — Monero-Chan</title>
+    <meta
+      name="description"
+      content="Every wallet holding Monero on Robinhood Chain, ranked live. Find out where you sit."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308070a'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23ff6b00' font-family='monospace'%3EM%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/climb.css" />
+    <link rel="stylesheet" href="/site.css" />
+    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="/section-guides.css" />
+  </head>
+  <body>
+    <main>
+      <header class="brand"><a href="#home">MONEROCHAN</a><span>ROBINHOOD CHAIN</span></header>
+      <section class="hero" id="home" aria-labelledby="hero-title">
+        <img src="/assets/ref/monerochan-ref.webp" alt="Monerochan, our orange-jacketed mascot, holding the Monero emblem" width="512" height="512" fetchpriority="high" />
+        <div class="hero__copy">
+          <p class="eyebrow">THE RESERVE IS THE STORY.</p>
+          <h1 id="hero-title">An XMR treasury.<br>With a face.<br>And a following.</h1>
+          <p>Monerochan’s plan: use trading fees to accumulate an XMR reserve on Hood and fund separate XMR distributions to holders.</p>
+          <a class="primary-link" href="#treasury">Explore the reserve <span aria-hidden="true">↓</span></a>
+          <small>Pre-launch · reserve and dividend contracts not connected</small>
+        </div>
+      </section>
+      <section class="treasury" id="treasury" aria-labelledby="treasury-title">
+        <div class="treasury__heading"><div><p class="eyebrow">THE CORE OF THE PROJECT</p><h2 id="treasury-title">The reserve.</h2></div><span class="phase">PRE-LAUNCH</span></div>
+        <div class="reserve-total"><span>XMR HELD BY THE RESERVE</span><strong>Not connected</strong><p>A published reserve address will make this balance independently checkable. No reserve balance has been verified yet.</p></div>
+        <div class="treasury__split"><article><h3>Reserve custody</h3><p>Multisig planned</p><small>Address, signers and approval threshold awaiting publication.</small></article><article><h3>Holder distributions</h3><p>Separate from the reserve</p><small>Distribution contract, eligibility and claim method awaiting publication.</small></article></div>
+        <details class="treasury-policy"><summary>What does holding Monerochan give me?</summary><p>Holder distributions are planned. Treasury ownership, redemption rights and a guaranteed price floor have not been established. The selected XMR token on Hood is an ERC-20 asset; its backing and redemption route still need independent verification.</p></details>
+      </section>
+      <section class="thesis" aria-labelledby="thesis-title">
+        <p class="eyebrow">THE PLAN</p>
+        <h2 id="thesis-title">The mascot gets your attention.<br>The reserve gives you something to follow.</h2>
+        <div class="mechanics">
+          <article><h3>Accumulate</h3><p>A planned 1% of eligible buy and sell volume funds the XMR reserve. Its published address will show what it actually holds.</p></article>
+          <article><h3>Distribute</h3><p>Holder dividends are planned in the selected XMR token on Hood. Distribution rules and the final fee allocation are still to be published.</p></article>
+          <article><h3>Follow the climb</h3><p>See the reserve alongside other holders. Look up your own wallet and explore the balance gaps between positions.</p></article>
+        </div>
+        <p class="plan-note">Proposed trading fees: 3% buy / 3% sell. Remaining allocation between dividends and marketing awaits confirmation.</p>
+      </section>
+      <section class="climb" id="climb" aria-labelledby="climb-title">
+        <header class="climb__head">
+          <div class="climb__titlerow">
+            <h2 class="climb__title" id="climb-title">The Climb</h2>
+            <p class="climb__status" id="status" data-state="loading">
+              <span class="dot" aria-hidden="true"></span>
+              <span id="status-text">loading</span>
+            </p>
+          </div>
+          <p class="climb__lede" id="lede">
+            A live snapshot of holders of the selected XMR token on Robinhood Chain. Known liquidity pools are filtered out.
+          </p>
+        </header>
+
+        <dl class="facts" id="facts"></dl>
+
+        <!-- find yourself -->
+        <form class="find" id="find" autocomplete="off">
+          <label class="find__label" for="addr">Where do you sit?</label>
+          <div class="find__row">
+            <input
+              class="find__input"
+              id="addr"
+              name="addr"
+              type="text"
+              inputmode="text"
+              spellcheck="false"
+              placeholder="paste your 0x address"
+              aria-describedby="find-msg"
+            />
+            <button class="find__go" type="submit">Find me</button>
+          </div>
+          <p class="find__msg" id="find-msg" role="status"></p>
+        </form>
+
+        <div class="views" id="views" hidden role="group" aria-label="Board view">
+          <button type="button" class="views__btn is-on" data-view="top">Top of the board</button>
+          <button type="button" class="views__btn" data-view="me">Around me</button>
+        </div>
+
+        <div class="board" id="board">
+          <div class="board__rows" id="rows" role="list" aria-label="Monero wallet leaderboard"></div>
+          <div class="climber" id="climber" hidden aria-hidden="true">
+            <div class="climber__art"></div>
+          </div>
+        </div>
+
+        <div class="target" id="target" hidden></div>
+
+        <div class="gap" id="gap" hidden></div>
+
+        <section class="ladder" aria-labelledby="ladder-title">
+          <h3 class="ladder__title" id="ladder-title">Balance gaps at current reference prices</h3>
+          <p class="plan-note">Reference values, not purchase quotes. Prices, balances and ranks move; fees and price impact are not included.</p>
+          <ol class="ladder__list" id="ladder"></ol>
+        </section>
+
+        <details class="rules">
+          <summary>Why some big holders are not on this list</summary>
+          <div class="rules__body">
+            <p>
+              Contracts that hold Monero as market inventory are excluded from the
+              wallet ranking. They are not positions, they are the market itself.
+            </p>
+            <ul id="pools"></ul>
+            <p class="rules__note" id="rules-note"></p>
+          </div>
+        </details>
+
+        <footer class="climb__foot">
+          <p id="source"></p>
+          <div class="sim">
+            <button type="button" id="sim-btn" class="sim__btn" aria-pressed="false">
+              Preview the climb
+            </button>
+            <span class="sim__hint">runs a fake reserve up the board so you can see the motion</span>
+          </div>
+        </footer>
+      </section>
+      <section class="receipts" aria-labelledby="receipts-title"><p class="eyebrow">THE RECORD, NOT THE PROMISE</p><h2 id="receipts-title">Every move needs a receipt.</h2><p>Reserve funding, purchases, distributions and withdrawals will be shown separately, with explorer links.</p><div class="receipt-empty"><span aria-hidden="true">↳</span><div><strong>Waiting for the reserve address</strong><p>The leaderboard above is live market data. A verified project activity feed begins when the reserve is connected.</p></div></div></section>
+      <footer class="site-footer"><a href="#home">MONEROCHAN</a><span>Community project on Robinhood Chain. No affiliation with Strategy, Robinhood or Monero is claimed.</span></footer>
+    </main>
+
+    <script type="module" src="/climb.js"></script>
+    <script type="module" src="/app.js"></script>
+    <script type="module" src="/rain.js"></script>
+    <script type="module" src="/section-guides.js"></script>
+  </body>
+</html>

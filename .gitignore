@@ -1,0 +1,12 @@
+node_modules/
+data/
+shots/
+pw/
+*.log
+*.zip
+.env
+.env.*
+!.env.example
+.playwriter*
+.DS_Store
+Thumbs.db

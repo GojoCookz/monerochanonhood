@@ -1,0 +1,1010 @@
+/* THE CLIMB
+   Tokens derive from the Monero-Chan medallion: orange ring, near-black field,
+   silver garment trim. Every color below is one of those three or a step of it.
+   Numbers are always mono + tabular so ranks do not jitter when they change. */
+
+:root {
+  --ink: #08070a;
+  --ink-1: #0e0c11;
+  --ink-2: #15121a;
+  --line: #241f2b;
+  --line-soft: #1a1720;
+
+  --orange: #ff6b00;
+  --orange-hi: #ff9542;
+  --ember: #6b2a00;
+
+  --silver: #ece7df;
+  --muted: #8a8294;
+  --muted-dim: #5c5568;
+
+  --up: #35d07f;
+  --down: #ff5c5c;
+  /* the visitor gets their own colour, distinct from our orange so the two
+     highlighted rows never read as the same thing */
+  --me: #4ea8ff;
+
+  --rail: 52px;
+  --row-h: 46px;
+  --climber-w: 46px;
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur: 420ms;
+
+  --font-ui: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-num: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--silver);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain. Counters the flat sterile look on a dark ground. ~4 KB, no request. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 16px 72px;
+}
+
+/* ---------- head ---------- */
+
+.climb__titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.climb__title {
+  margin: 0;
+  font-size: clamp(2rem, 9vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.climb__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  flex-shrink: 0;
+  font-family: var(--font-num);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted-dim);
+  flex-shrink: 0;
+}
+
+.climb__status[data-state='live'] .dot {
+  background: var(--up);
+  box-shadow: 0 0 0 3px rgb(53 208 127 / 0.16);
+}
+.climb__status[data-state='live'] {
+  color: var(--up);
+}
+.climb__status[data-state='stale'] .dot {
+  background: var(--orange);
+}
+.climb__status[data-state='stale'] {
+  color: var(--orange-hi);
+}
+.climb__status[data-state='error'] .dot {
+  background: var(--down);
+}
+.climb__status[data-state='error'] {
+  color: var(--down);
+}
+
+.climb__lede {
+  margin: 14px 0 0;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* ---------- facts ---------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  margin: 24px 0 0;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+}
+
+.facts > div {
+  background: var(--ink-1);
+  padding: 12px 14px;
+}
+
+.facts dt {
+  margin: 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+}
+
+.facts dd {
+  margin: 4px 0 0;
+  font-family: var(--font-num);
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--silver);
+}
+
+.facts dd small {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+/* ---------- find yourself ---------- */
+
+.find {
+  margin-top: 24px;
+}
+
+.find__label {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+  margin-bottom: 8px;
+}
+
+.find__row {
+  display: flex;
+  gap: 8px;
+}
+
+.find__input {
+  flex: 1;
+  min-width: 0;
+  background: var(--ink-1);
+  border: 1px solid var(--line);
+  color: var(--silver);
+  font-family: var(--font-num);
+  font-size: 0.875rem;
+  padding: 0 12px;
+  min-height: 48px;
+  border-radius: 0;
+  transition: border-color 160ms;
+}
+
+.find__input::placeholder {
+  color: var(--muted-dim);
+}
+
+.find__input:hover {
+  border-color: var(--ember);
+}
+
+.find__input:focus {
+  outline: none;
+  border-color: var(--orange);
+}
+
+.find__input:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -1px;
+}
+
+.find__go {
+  flex-shrink: 0;
+  min-height: 48px;
+  padding: 0 18px;
+  background: var(--orange);
+  border: 1px solid var(--orange);
+  color: #000;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 160ms, transform 120ms var(--ease);
+}
+
+.find__go:hover {
+  background: var(--orange-hi);
+}
+
+.find__go:active {
+  transform: translateY(1px);
+}
+
+.find__go:focus-visible {
+  outline: 2px solid var(--silver);
+  outline-offset: 2px;
+}
+
+.find__msg {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  min-height: 1.2em;
+  color: var(--muted);
+}
+
+.find__msg[data-tone='ok'] {
+  color: var(--me);
+}
+.find__msg[data-tone='warn'] {
+  color: var(--orange-hi);
+}
+.find__msg[data-tone='zero'] {
+  color: var(--muted);
+}
+
+/* ---------- view toggle ---------- */
+
+.views {
+  display: flex;
+  gap: 1px;
+  margin-top: 16px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+}
+
+.views__btn {
+  flex: 1;
+  min-height: 40px;
+  background: var(--ink-1);
+  border: 0;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 160ms, background-color 160ms;
+}
+
+.views__btn:hover {
+  color: var(--silver);
+}
+
+.views__btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+}
+
+.views__btn.is-on {
+  background: var(--ink-2);
+  color: var(--silver);
+  box-shadow: inset 0 -2px 0 var(--orange);
+}
+
+/* ---------- board ---------- */
+
+/* padding-bottom reserves rail space for her body. She hangs BELOW the rung
+   she grips, and at the bottom row that overhang was painting on top of the
+   gap panel. Measured overhang is ~(climber height - row height) / 2 + slack. */
+.board {
+  position: relative;
+  margin-top: 26px;
+  padding-left: var(--rail);
+  padding-bottom: 56px;
+  border-top: 1px solid var(--line);
+}
+
+/* the ladder's side rail — the thing she climbs */
+.board::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--rail) / 2 - 1px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--line) 8%,
+    var(--line) 92%,
+    transparent
+  );
+}
+
+.board__rows {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The XMR column is fixed, not `auto`. With `auto`, a 7-char balance
+   (14.0564) stole width from the address and truncated it to `0x92d4...F7...`
+   on the top row only, which looked like a rendering bug. */
+/* Budget at 390px: 390 - 32 page pad - 52 rail - 38.4 rank - 94.4 xmr
+   - 17.6 delta - 21 gaps = 134.6px for the address cell, of which the chip
+   takes 16 + 7. Leaves ~111px for "0x651a...82a4" which needs ~86px at
+   13px mono. Fits with margin. Do not widen the xmr column again. */
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) 5.9rem 1.1rem;
+  align-items: center;
+  gap: 7px;
+  min-height: var(--row-h);
+  padding: 0 2px;
+  border-bottom: 1px solid var(--line-soft);
+  will-change: transform;
+}
+
+/* the rung: each row's own bar, sticking into the rail */
+.row::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--rail) * -1 + 8px);
+  width: calc(var(--rail) - 16px);
+  height: 2px;
+  background: var(--line);
+  top: 50%;
+}
+
+.row__rank {
+  font-family: var(--font-num);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-dim);
+}
+
+.row__who {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.row__id {
+  font-family: var(--font-num);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+
+.row__xmr {
+  font-family: var(--font-num);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--silver);
+}
+
+.row__xmr span {
+  color: var(--muted-dim);
+  font-weight: 400;
+  font-size: 0.75rem;
+  margin-left: 3px;
+}
+
+.row__delta {
+  font-family: var(--font-num);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--muted-dim);
+}
+
+.row__delta[data-dir='up'] {
+  color: var(--up);
+}
+.row__delta[data-dir='down'] {
+  color: var(--down);
+}
+
+/* our row */
+.row--us {
+  background: linear-gradient(90deg, rgb(255 107 0 / 0.14), rgb(255 107 0 / 0));
+  border-bottom-color: var(--orange);
+}
+
+.row--us .row__rank,
+.row--us .row__id {
+  color: var(--orange-hi);
+}
+
+.row--us .row__xmr {
+  color: #fff;
+}
+
+.row--us::before {
+  background: var(--orange);
+  height: 3px;
+}
+
+.row--us .row__id {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.8125rem;
+}
+
+/* the visitor's row */
+.row--me {
+  background: linear-gradient(90deg, rgb(78 168 255 / 0.16), rgb(78 168 255 / 0));
+  border-bottom-color: var(--me);
+}
+
+.row--me .row__rank,
+.row--me .row__id {
+  color: var(--me);
+}
+
+.row--me .row__xmr {
+  color: #fff;
+}
+
+.row--me::before {
+  background: var(--me);
+  height: 3px;
+}
+
+/* every ranked rival is a target you can price */
+.is-targetable {
+  cursor: pointer;
+  transition: background-color 160ms;
+}
+
+.is-targetable:hover {
+  background: rgb(255 255 255 / 0.035);
+}
+
+.is-targetable:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+}
+
+.row.is-target {
+  background: rgb(255 107 0 / 0.09);
+}
+
+.row.is-target::before {
+  background: var(--orange-hi);
+}
+
+.row.is-target .row__rank {
+  color: var(--orange-hi);
+}
+
+/* pre-launch: honest, not a fake rank */
+.row--pending {
+  background: none;
+  border-bottom-style: dashed;
+  border-bottom-color: var(--ember);
+}
+
+.row--pending .row__rank {
+  color: var(--muted-dim);
+  font-size: 0.75rem;
+}
+
+.row--pending .row__xmr {
+  color: var(--muted-dim);
+}
+
+.row--overtaken {
+  animation: dim 900ms var(--ease);
+}
+
+@keyframes dim {
+  0% {
+    background: rgb(255 107 0 / 0.18);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* ---------- climber ---------- */
+
+/* She lives in the rail lane. The lane is empty except for rungs, so she is
+   free to be taller than one row - a climber spanning rungs is the point. */
+.climber {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--rail);
+  height: var(--row-h);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  /* transition, not keyframes: a rank update mid-flight retargets smoothly */
+  transition: transform var(--dur) var(--ease);
+  transition-delay: 60ms;
+  z-index: 3;
+}
+
+/* Source cells are 160x360 (aspect 0.4444). The element MUST match that
+   aspect or every pose distorts differently. */
+.climber__art {
+  width: var(--climber-w);
+  aspect-ratio: 160 / 360;
+  background-image: url('/assets/monerochan-climb.png');
+  background-size: 300% 200%;
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 3px 10px rgb(0 0 0 / 0.85));
+  transition: background-position 0ms;
+}
+
+/* sprite sheet is 3 cols x 2 rows: HOLD REACH CLIMB / OVERTAKE SLIP CROWN */
+.climber[data-pose='hold'] .climber__art {
+  background-position: 0% 0%;
+}
+.climber[data-pose='reach'] .climber__art {
+  background-position: 50% 0%;
+}
+.climber[data-pose='climb'] .climber__art {
+  background-position: 100% 0%;
+}
+.climber[data-pose='overtake'] .climber__art {
+  background-position: 0% 100%;
+}
+.climber[data-pose='slip'] .climber__art {
+  background-position: 50% 100%;
+}
+.climber[data-pose='crown'] .climber__art {
+  background-position: 100% 100%;
+}
+
+/* one-shot triumph beat, then settle. plays once, never loops */
+.climber[data-pose='overtake'] .climber__art {
+  animation: cheer 900ms var(--ease);
+}
+
+@keyframes cheer {
+  0% {
+    transform: translateY(6px) scale(0.96);
+  }
+  45% {
+    transform: translateY(-5px) scale(1.04);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* she sits ON the line instead of hanging under it */
+.climber[data-mode='perch'] {
+  transition:
+    transform var(--dur) var(--ease);
+}
+
+/* ---------- target readout ---------- */
+
+.target {
+  margin-top: 14px;
+  border: 1px solid var(--orange);
+  background: rgb(255 107 0 / 0.06);
+  padding: 12px 14px;
+}
+
+.target__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.target__label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--orange-hi);
+}
+
+.target__x {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-family: var(--font-num);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  padding: 6px;
+  min-height: 32px;
+}
+
+.target__x:hover {
+  color: var(--silver);
+}
+
+.target__x:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.target__body {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.target__addr {
+  font-family: var(--font-num);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.target__need {
+  font-family: var(--font-num);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--silver);
+}
+
+.target__need b {
+  color: var(--orange-hi);
+  margin-left: 6px;
+}
+
+.target__need em {
+  font-style: normal;
+  color: var(--up);
+  font-size: 0.875rem;
+}
+
+.target__hint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--muted-dim);
+}
+
+.rung--done .rung__cost em {
+  font-style: normal;
+  color: var(--up);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+}
+
+/* ---------- gap CTA ---------- */
+
+.gap {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: var(--ink-1);
+}
+
+.gap__label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+}
+
+.gap__big {
+  margin-top: 6px;
+  font-family: var(--font-num);
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: var(--orange-hi);
+  line-height: 1.05;
+}
+
+.gap__sub {
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.gap__bar {
+  margin-top: 14px;
+  height: 4px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.gap__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  transition: transform var(--dur) var(--ease);
+  transform-origin: left;
+}
+
+/* ---------- ladder ---------- */
+
+.ladder {
+  margin-top: 34px;
+}
+
+.ladder__title {
+  margin: 0 0 12px;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+  font-weight: 500;
+}
+
+.ladder__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+}
+
+.rung {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr auto;
+  align-items: baseline;
+  gap: 10px;
+  background: var(--ink-1);
+  padding: 12px 14px;
+}
+
+.rung__rank {
+  font-family: var(--font-num);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--orange);
+  font-variant-numeric: tabular-nums;
+}
+
+.rung__what {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.rung__cost {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rung__cost small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.6875rem;
+  color: var(--muted-dim);
+}
+
+/* ---------- rules ---------- */
+
+.rules {
+  margin-top: 30px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 14px;
+}
+
+.rules summary {
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  list-style: none;
+}
+
+.rules summary::-webkit-details-marker {
+  display: none;
+}
+
+.rules summary::before {
+  content: '+ ';
+  color: var(--orange);
+  font-family: var(--font-num);
+}
+
+.rules[open] summary::before {
+  content: '– ';
+}
+
+.rules summary:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.rules__body {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.rules__body ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  display: grid;
+  gap: 4px;
+}
+
+.rules__body li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-num);
+  font-size: 0.75rem;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.rules__body li b {
+  color: var(--silver);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.rules__note {
+  color: var(--muted-dim);
+  font-size: 0.75rem;
+}
+
+/* ---------- foot ---------- */
+
+.climb__foot {
+  margin-top: 26px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-num);
+  font-size: 0.6875rem;
+  color: var(--muted-dim);
+  line-height: 1.7;
+}
+
+.climb__foot p {
+  margin: 0 0 12px;
+}
+
+.sim {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sim__btn {
+  font-family: var(--font-num);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  cursor: pointer;
+  min-height: 36px;
+  transition: color 160ms, border-color 160ms, background-color 160ms;
+}
+
+.sim__btn:hover {
+  color: var(--orange-hi);
+  border-color: var(--ember);
+}
+
+.sim__btn:active {
+  background: var(--ink-2);
+}
+
+.sim__btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.sim__btn[aria-pressed='true'] {
+  color: #000;
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.sim__hint {
+  color: var(--muted-dim);
+}
+
+/* the simulation must never be mistakable for the real board */
+.board[data-sim='true'] {
+  outline: 1px dashed var(--orange);
+  outline-offset: 8px;
+}
+
+.board[data-sim='true']::after {
+  content: 'SIMULATION — NOT REAL DATA';
+  position: absolute;
+  top: -8px;
+  right: 0;
+  transform: translateY(-100%);
+  font-family: var(--font-num);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #000;
+  background: var(--orange);
+  padding: 3px 7px;
+}
+
+/* ---------- desktop ---------- */
+
+@media (min-width: 640px) {
+  main {
+    padding: 56px 24px 96px;
+  }
+
+  .facts {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  :root {
+    --rail: 72px;
+    --row-h: 52px;
+    --climber-w: 64px;
+  }
+
+  .row {
+    grid-template-columns: 3.4rem minmax(0, 1fr) 8rem 2.2rem;
+  }
+
+  .row__id {
+    font-size: 0.875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
