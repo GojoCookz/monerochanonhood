@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process'
 import sharp from 'sharp'
 
 let checked = 0
-for (const dir of ['web', 'server', 'tools']) {
+for (const dir of ['web', 'server', 'tools', 'api', 'test']) {
   for (const file of await fs.readdir(dir)) {
     if (!/\.(?:mjs|js)$/.test(file)) continue
     const name = path.join(dir, file)

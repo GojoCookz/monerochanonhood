@@ -4,7 +4,7 @@ An interactive, pre-launch XMR treasury concept for Robinhood Chain. The interfa
 
 ## Run locally
 
-Requires Node.js 20 or later and npm. The current market-data transport uses Windows PowerShell on Windows. On other systems it uses Node fetch; explorer access must be tested on the intended host.
+Requires Node.js 20 or later and npm. Explorer requests use the cross-platform `impit` client; no PowerShell process is required.
 
 ```sh
 npm ci
@@ -20,6 +20,19 @@ npm run art:export
 ```
 
 `snapshot` runs a one-off market-data refresh. `art:export` recreates the ten delivery images and a contact sheet from the preserved raw artwork.
+
+## Vercel deployment
+
+`vercel.json` runs `npm run build` and serves the frozen `dist/` output. `api/climb.js` is a Node serverless function sharing the same snapshot builder as the local server. It does not depend on a local background process or write into the deployment filesystem.
+
+The function combines concurrent requests into one crawl, caches successful results in its warm instance, and sets CDN cache headers. A cold request may wait for the explorer crawl. Warm-instance history is temporary; this is not a durable historical index. A failed warm refresh keeps the previous timestamp; a failed cold crawl returns 503 rather than inventing data.
+
+```sh
+npm run build
+npm test
+```
+
+Live site: https://monerochanonhood.vercel.app/
 
 ## Included
 

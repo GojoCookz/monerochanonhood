@@ -25,7 +25,7 @@ async function readJson(file, fallback) {
   }
 }
 
-export async function buildSnapshot() {
+export async function buildSnapshot({ persist = true, previous = null } = {}) {
   const startedAt = Date.now()
 
   const [{ holders, pages }, { market, marketSource }, price] = await Promise.all([
@@ -56,7 +56,7 @@ export async function buildSnapshot() {
     w.rank = i + 1
   })
 
-  const prev = await readJson(LATEST, null)
+  const prev = persist ? await readJson(LATEST, null) : previous
   const prevRanks = new Map(
     (prev?.wallets ?? []).map((w) => [w.address.toLowerCase(), w.rank]),
   )
@@ -130,6 +130,8 @@ export async function buildSnapshot() {
     pools: pools.sort((a, b) => b.xmr - a.xmr).slice(0, 5),
   }
 
+  if (!persist) return snapshot
+
   await fs.mkdir(DATA, { recursive: true })
   await fs.writeFile(LATEST, JSON.stringify(snapshot, null, 2))
 
@@ -148,7 +150,7 @@ export async function buildSnapshot() {
 
 // pathToFileURL, not string concat: on Windows argv[1] is "C:\..." and
 // import.meta.url is "file:///C:/...", so a hand-rolled compare never matches.
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   buildSnapshot()
     .then((s) => {
       console.log(`crawled ${s.source.pagesCrawled} pages in ${s.crawlMs}ms`)

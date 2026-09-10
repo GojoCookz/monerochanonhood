@@ -4,6 +4,8 @@
   "description": "Interactive Monerochan treasury concept and holder leaderboard on Robinhood Chain",
   "private": true,
   "scripts": {
+    "build": "node tools/build.mjs",
+    "test": "node --test test/deployment.test.mjs",
     "start": "node server/serve.mjs",
     "snapshot": "node server/snapshot.mjs",
     "check": "node tools/check.mjs",
@@ -13,6 +15,7 @@
   "author": "",
   "type": "module",
   "dependencies": {
+    "impit": "^0.14.5",
     "sharp": "^0.35.4"
   }
 }

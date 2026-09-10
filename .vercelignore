@@ -1,0 +1,9 @@
+node_modules
+data
+shots
+pw
+grab and go
+assets/pack-raw
+*.zip
+*.log
+.env*

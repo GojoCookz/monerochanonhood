@@ -10,3 +10,7 @@ pw/
 .playwriter*
 .DS_Store
 Thumbs.db
+dist/
+.vercel/
+
+.vercel
