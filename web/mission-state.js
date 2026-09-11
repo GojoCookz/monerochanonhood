@@ -17,7 +17,7 @@ export function missionProgress(snapshot) {
     : rank>1 ? 'Reach the top spot' : 'Leading this snapshot'
   return {
     rankLabel:rank===null?'Unranked':'#'+rank,
-    balanceLabel:known?reserve.xmr.toFixed(4)+' XMR':'Unavailable',
+    balanceLabel:known?reserve.xmr.toFixed(6)+' XMR':'Unavailable',
     next,completed,stages,
   }
 }

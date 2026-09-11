@@ -12,7 +12,7 @@ export function renderReserve(snapshot) {
   address.href='https://robinhoodchain.blockscout.com/address/'+reserve.address
   address.hidden=false
   const known=reserve.xmr!==null && Number.isFinite(reserve.xmr)
-  panel.querySelector('.reserve-total strong').textContent=known ? reserve.xmr.toFixed(4)+' XMR' : 'Balance unavailable'
+  panel.querySelector('.reserve-total strong').textContent=known ? reserve.xmr.toFixed(6)+' XMR' : 'Balance unavailable'
   panel.querySelector('.phase').textContent='WALLET PUBLISHED'
   panel.querySelector('.reserve-total p').textContent=known
     ? `${reserve.rank ? 'Rank #'+reserve.rank+' in the filtered holder snapshot.' : 'Unranked in the holder snapshot.'} Balance checked ${new Date(reserve.balanceCheckedAt ?? snapshot.takenAt).toLocaleString()}.`

@@ -13,6 +13,7 @@
 #use-live-fee { min-height:44px; color:#ffc18a; border-color:#774e28; border-radius:8px; }
 #use-live-fee:disabled { opacity:.5; cursor:default; }
 .mobile-totals strong { font-variant-numeric:tabular-nums; }
+.holder-verification { display:inline-flex; align-items:center; min-height:44px; font-size:12px; color:#ffc18a; }
 .dividend-modes { display:flex; gap:8px; margin:0 0 18px; }
 .dividend-modes button { flex:1; min-height:46px; padding:12px; border:1px solid #774e28; border-radius:10px; color:#e8c9a7; background:#191714; font:700 13px var(--font-ui); cursor:pointer; }
 .dividend-modes button[aria-pressed=true] { background:#ff932d; color:#171009; }

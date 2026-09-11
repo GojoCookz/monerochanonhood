@@ -6,6 +6,7 @@
    - Simulation mode is visibly marked and cannot be mistaken for real data. */
 
 import { renderReserve } from './reserve.js'
+import { formatUsd } from './format.js'
 
 const $ = (id) => document.getElementById(id)
 
@@ -47,9 +48,8 @@ const data = () => sim ?? live
 
 /* ---------- format ---------- */
 
-const fmtXmr = (n) => (n == null ? '—' : n >= 1000 ? n.toFixed(1) : n.toFixed(4))
-const fmtUsd = (n) =>
-  n == null ? '—' : n >= 1000 ? '$' + Math.round(n).toLocaleString('en-US') : '$' + n.toFixed(0)
+const fmtXmr = (n) => (n == null ? '—' : n >= 1000 ? n.toFixed(1) : n >= 1 ? n.toFixed(4) : n > 0 && n < 0.000001 ? '<0.000001' : n.toFixed(6))
+const fmtUsd = formatUsd
 const shortAddr = (a) => `${a.slice(0, 6)}…${a.slice(-4)}`
 const isAddr = (s) => /^0x[0-9a-fA-F]{40}$/.test(s.trim())
 
@@ -202,6 +202,7 @@ function buildRows(d) {
 
   for (const r of list) {
     r.me = me?.kind === 'wallet' && r.key === me.address.toLowerCase()
+    if(r.key==='0x000000000000000000000000000000000000dead')r.label='Burn address'
   }
 
   // our reserve
@@ -406,6 +407,7 @@ function renderTarget(d) {
         ? ''
         : '<p class="target__hint">Enter your address above to price this against what you already hold.</p>'
     }`
+  appendVerification(els.target,addr)
   $('target-x').addEventListener('click', () => {
     targetKey = null
     render(data())
@@ -414,14 +416,25 @@ function renderTarget(d) {
 
 /* ---------- panels ---------- */
 
+function appendVerification(container,address){
+  if(!/^0x[0-9a-f]{40}$/i.test(address??''))return
+  const link=document.createElement('a')
+  link.className='holder-verification'
+  link.href='https://robinhoodchain.blockscout.com/address/'+address
+  link.target='_blank'
+  link.rel='noopener'
+  link.textContent='Verify this holder on the explorer ↗'
+  container.append(link)
+}
+
 function renderFacts(d) {
   const t = d.totals
   // Fixed 2dp: side by side, 42.0137 next to 127.95 reads as a bug.
   const f2 = (n) => n.toFixed(2)
   els.facts.innerHTML = `
-    <div><dt>Wallets holding</dt><dd>${t.wallets}<small>excludes ${t.pools} pool contracts</small></dd></div>
+    <div><dt>Filtered holders</dt><dd>${t.wallets}<small>excludes ${t.pools} known pool contracts</small></dd></div>
     <div><dt>Hold ≥ 1 XMR</dt><dd>${t.walletsAboveOne}<small>on the entire chain</small></dd></div>
-    <div><dt>In wallets</dt><dd>${f2(t.walletXmr)}<small>XMR held as positions</small></dd></div>
+    <div><dt>Other holders</dt><dd>${f2(t.walletXmr)}<small>includes unclassified contracts</small></dd></div>
     <div><dt>In pools</dt><dd>${f2(t.poolXmr)}<small>XMR as market inventory</small></dd></div>`
 }
 
@@ -451,6 +464,7 @@ function renderGap(d) {
       <div class="gap__sub">${fmtUsd(usd(need))} at ${
         d.price ? '$' + d.price.usd.toFixed(2) : 'unknown'
       } per XMR${me.rank ? '' : ' — you hold none yet'}</div>`
+    appendVerification(els.gap,targetRow[0])
     return
   }
 
@@ -467,6 +481,7 @@ function renderGap(d) {
     <div class="gap__sub">${fmtUsd(r.needUsd)} at ${
       d.price ? '$' + d.price.usd.toFixed(2) : 'unknown'
     } per XMR${deployed ? '' : ' — the reserve is not deployed yet'}</div>`
+  appendVerification(els.gap,r.holderAddress)
 }
 
 function renderLadder(d) {
@@ -495,7 +510,7 @@ function renderRules(d) {
     .join('')
   els.rulesNote.textContent =
     d.source.marketExclusions === 'full'
-      ? 'Pool contracts are identified from the live DEX pair list, so the exclusion updates itself as new pools appear.'
+      ? 'Known pools are identified from the DEX pair list. Burn addresses and other unclassified contracts may remain. This is a filtered address list, not a verified list of people or ordinary wallets.'
       : 'The DEX pair list could not be reached on this refresh, so only the Uniswap v4 PoolManager is excluded. Some pool contracts may still be ranked as wallets.'
 }
 
@@ -503,7 +518,7 @@ function renderStatus(d) {
   const age = (Date.now() - new Date(d.takenAt)) / 1000
   const state = age < 300 ? 'live' : 'stale'
   els.status.dataset.state = state
-  els.statusText.textContent = `${state} · ${ago(d.takenAt)}`
+  els.statusText.textContent = `${state==='live'?'updated':state} · ${ago(d.takenAt)}`
 }
 
 function renderSource(d) {

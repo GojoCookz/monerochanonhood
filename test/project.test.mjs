@@ -4,6 +4,16 @@ import { encodeAbiParameters, encodeEventTopics, parseAbi, parseAbiParameters } 
 import { poolVolume, selectMarket, POOL_EVENTS } from '../server/project-math.mjs'
 import { readPoolVolume } from '../server/project-volume.mjs'
 import { readRpc } from '../server/rpc.mjs'
+import { xmrFromRaw } from '../server/amounts.mjs'
+import { formatUsd } from '../web/format.js'
+
+test('small reserve gaps retain precision before USD conversion',()=>{
+  const gap=xmrFromRaw('579828907599117')
+  assert.equal(gap,0.000579828907599117)
+  assert.equal(formatUsd(gap*498.8),'$0.29')
+  assert.equal(formatUsd(0.0004),'<$0.01')
+  assert.equal(formatUsd(0),'$0.00')
+})
 
 const manager='0x0000000000000000000000000000000000000001'
 const pool='0x'+'01'.repeat(32)

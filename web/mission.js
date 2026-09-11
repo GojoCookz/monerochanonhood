@@ -102,7 +102,7 @@ export function renderMission(snapshot){
   }
   card.dataset.completed=String(progress.completed)
   const source=document.querySelector('#mission-source')
-  source.textContent='Selected XMR on Hood · known pools excluded · '+new Date(snapshot.takenAt).toLocaleTimeString()
+  source.textContent=`Filtered holder rank · known pools excluded${snapshot.reserve.allAddressRank?' · all-address rank #'+snapshot.reserve.allAddressRank:''} · `+new Date(snapshot.takenAt).toLocaleTimeString()
   entries=updateJournal(entries,snapshot)
   try{localStorage.setItem(storageKey,JSON.stringify(entries))}catch{}
   drawJournal()

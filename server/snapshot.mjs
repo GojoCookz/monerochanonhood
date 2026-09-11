@@ -5,6 +5,7 @@ import { fetchAllHolders, fetchMarketAddresses, fetchXmrPriceUsd } from './block
 import { RESERVE_ADDRESS, XMR } from './config.mjs'
 import { fetchReserveState } from './reserve.mjs'
 import { fetchProjectStats } from './project-stats.mjs'
+import { xmrFromRaw } from './amounts.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DATA = path.join(ROOT, 'data')
@@ -13,11 +14,7 @@ const HISTORY = path.join(DATA, 'history.json')
 
 const WEI = 10n ** 18n
 
-/** exact 18-dec -> number, for display only. All ranking is done on BigInt. */
-function toXmr(raw) {
-  const v = BigInt(raw)
-  return Number((v * 10_000n) / WEI) / 10_000
-}
+const toXmr = xmrFromRaw
 
 async function readJson(file, fallback) {
   try {
@@ -73,6 +70,8 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
 
   const reserveKey = RESERVE_ADDRESS?.toLowerCase() ?? null
   const us = reserveKey ? wallets.find((w) => w.address.toLowerCase() === reserveKey) ?? null : null
+  const allReserveIndex = reserveKey ? [...holders].sort((a,b)=>BigInt(a.raw)>BigInt(b.raw)?-1:BigInt(a.raw)<BigInt(b.raw)?1:0)
+    .findIndex(holder=>holder.address?.toLowerCase()===reserveKey) : -1
 
   // Cost of each rung, priced today. Works before we hold anything.
   const rungFor = (targetRank) => {
@@ -83,6 +82,7 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
     return {
       rank: targetRank,
       holderXmr: occupant.xmr,
+      holderAddress: occupant.address,
       needXmr,
       needUsd: price ? needXmr * price.usd : null,
       reached: need <= 0n,
@@ -118,6 +118,7 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
       address: RESERVE_ADDRESS,
       deployed: Boolean(RESERVE_ADDRESS),
       rank: us?.rank ?? null,
+      allAddressRank: allReserveIndex < 0 ? null : allReserveIndex + 1,
       xmr: reserveState.raw !== null ? toXmr(reserveState.raw) : us?.xmr ?? null,
       raw: reserveState.raw ?? us?.raw ?? null,
       accountType: reserveState.accountType,
