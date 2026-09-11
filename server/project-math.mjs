@@ -1,4 +1,5 @@
 import { decodeEventLog, parseAbi } from 'viem'
+import { XMR } from './config.mjs'
 
 // Signatures checked against installed v4-core IPoolManager.sol.
 export const POOL_EVENTS=parseAbi([
@@ -33,5 +34,6 @@ export function selectMarket(payload,token,pool){
     &&pair.baseToken?.address?.toLowerCase()===token.toLowerCase())
   if(!item)return null
   return {priceUsd:finite(item.priceUsd),volume24hUsd:finite(item.volume?.h24),liquidityUsd:finite(item.liquidity?.usd),
+    lpXmr:item.quoteToken?.address?.toLowerCase()===XMR.toLowerCase()?finite(item.liquidity?.quote):null,
     checkedAt:new Date().toISOString(),source:'DexScreener canonical pool, rolling 24h'}
 }

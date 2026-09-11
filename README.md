@@ -4,9 +4,11 @@ An interactive XMR treasury and token site for Robinhood Chain. The interface in
 
 ## The shared Climb
 
-The entrance frames a shared mission: one community following its reserve toward the top of the selected XMR holder board. Opening the world centres the reserve; personal wallet lookup remains a separate, preserved view.
+The reserve is DexScreener's reported **XMR liquidity in the MONEROCHAN/XMR pool**. Its `≈#N` is a comparison with filtered holder balances, not an official explorer rank or a separate wallet. Actual holder ranks are not renumbered around that marker. The former separate wallet tracker is retired. Pool observations use a new local journal key; earlier wallet observations are not deleted.
 
-Checkpoints (listed, top 10, top 3, first place) come from the current reserve rank. They can become incomplete again if rank falls. A goal is not a claim that it has been reached. Motion previews remain labelled simulation and never change the live mission panel or journal.
+The entrance frames a shared mission: one community following the pool's XMR balance. Opening the world centres the LP marker; personal wallet lookup remains a separate, preserved view.
+
+Checkpoints (tracked, equivalent top 10, top 3, first place) follow the current comparison rank. They can become incomplete again if the comparison rank falls. A goal is not a claim that it has been reached. Motion previews remain labelled simulation and never change the live mission panel or journal.
 
 The expedition journal stores up to 20 changed balance/rank observations in this browser's local storage. It is device-local, not a shared event index or transaction proof. Clearing it offers an undo. The dividend calculator, artwork, background rain, umbrella reveal, market sources and five-row wallet wheel remain available.
 
@@ -62,7 +64,7 @@ The selected pair asset is the ERC-20 at `0x38F728351fd9565087a4fF0ad5049739e0Ce
 
 The leaderboard uses paginated explorer snapshots and filters known liquidity-pool addresses found in a DEX listing. It is not a block-atomic snapshot or a complete classification of every contract, and it is not a leaderboard of native Monero holders. USD figures are reference estimates, not executable quotes.
 
-Project reserve wallet: `0x25D58Dcf6510F5D91a7De0f5246d6D9E74CD8fb1`. The API reads its selected-XMR token balance and account type from the explorer. A successful empty token-balance response is zero; a failed request is unavailable. The address was supplied by the project owner; multisig custody has not been established.
+The Reserve screen uses the canonical pool's XMR quote balance. It does not show a separate project wallet. Missing pool data remains unavailable rather than being replaced with a wallet balance or a fabricated zero. Pool liquidity can rise or fall with trades and is not an automatic redemption claim for token holders.
 
 ### Connected token
 
@@ -83,7 +85,7 @@ Lifetime pool turnover sums the absolute XMR leg of canonical `Swap` logs, count
 - The animated climb preview is labelled simulation.
 - The dividend calculator uses user-editable illustrative inputs, not promised returns.
 
-The deployed normal fees read **3.33% buy / 3.33% sell**, superseding the earlier 3% draft. At integration, the hook's effective split returned 3003 / 1574 / 5423 basis points of the fee for platform / creator / holders. The configured creator recipient `0x481B9D67680e3aCb94C605e647C2B1a9eCb0aeff` differs from the reserve wallet. The site does not claim that a fixed 1% automatically reaches the reserve. The simulator can apply the observed holder allocation, before processing adjustments, via an explicit button.
+The deployed normal fees read **3.33% buy / 3.33% sell**, superseding the earlier 3% draft. At integration, the hook's effective split returned 3003 / 1574 / 5423 basis points of the fee for platform / creator / holders. Creator fees and holder payouts are separate from LP liquidity. The simulator can apply the observed holder allocation, before processing adjustments, via an explicit button.
 
 ## Verification
 

@@ -2,8 +2,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { fetchAllHolders, fetchMarketAddresses, fetchXmrPriceUsd } from './blockscout.mjs'
-import { RESERVE_ADDRESS, XMR } from './config.mjs'
-import { fetchReserveState } from './reserve.mjs'
+import { XMR } from './config.mjs'
+import { poolTracker } from '../web/pool-tracker.js'
 import { fetchProjectStats } from './project-stats.mjs'
 import { xmrFromRaw } from './amounts.mjs'
 
@@ -28,11 +28,10 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
   const startedAt = Date.now()
   const prev = persist ? await readJson(LATEST, null) : previous
 
-  const [{ holders, pages }, { market, marketSource }, price, reserveState, project] = await Promise.all([
+  const [{ holders, pages }, { market, marketSource }, price, project] = await Promise.all([
     fetchAllHolders(),
     fetchMarketAddresses(),
     fetchXmrPriceUsd(),
-    fetchReserveState(),
     fetchProjectStats(prev?.project),
   ])
 
@@ -68,32 +67,11 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
     w.delta = before == null ? null : before - w.rank
   }
 
-  const reserveKey = RESERVE_ADDRESS?.toLowerCase() ?? null
-  const us = reserveKey ? wallets.find((w) => w.address.toLowerCase() === reserveKey) ?? null : null
-  const allReserveIndex = reserveKey ? [...holders].sort((a,b)=>BigInt(a.raw)>BigInt(b.raw)?-1:BigInt(a.raw)<BigInt(b.raw)?1:0)
-    .findIndex(holder=>holder.address?.toLowerCase()===reserveKey) : -1
-
-  // Cost of each rung, priced today. Works before we hold anything.
-  const rungFor = (targetRank) => {
-    const occupant = wallets[targetRank - 1]
-    if (!occupant) return null
-    const need = BigInt(occupant.raw) - BigInt(us?.raw ?? 0)
-    const needXmr = need > 0n ? toXmr(need.toString()) : 0
-    return {
-      rank: targetRank,
-      holderXmr: occupant.xmr,
-      holderAddress: occupant.address,
-      needXmr,
-      needUsd: price ? needXmr * price.usd : null,
-      reached: need <= 0n,
-    }
-  }
-
   const poolTotal = pools.reduce((s, p) => s + BigInt(p.raw), 0n)
   const walletTotal = wallets.reduce((s, w) => s + BigInt(w.raw), 0n)
 
   const snapshot = {
-    schema: 2,
+    schema: 3,
     takenAt: new Date().toISOString(),
     crawlMs: Date.now() - startedAt,
     source: {
@@ -114,21 +92,10 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
       walletsAboveOne: wallets.filter((w) => BigInt(w.raw) >= WEI).length,
       walletsAbovePointOne: wallets.filter((w) => BigInt(w.raw) >= WEI / 10n).length,
     },
-    reserve: {
-      address: RESERVE_ADDRESS,
-      deployed: Boolean(RESERVE_ADDRESS),
-      rank: us?.rank ?? null,
-      allAddressRank: allReserveIndex < 0 ? null : allReserveIndex + 1,
-      xmr: reserveState.raw !== null ? toXmr(reserveState.raw) : us?.xmr ?? null,
-      raw: reserveState.raw ?? us?.raw ?? null,
-      accountType: reserveState.accountType,
-      balanceCheckedAt: reserveState.checkedAt,
-      balanceSource: reserveState.raw !== null ? 'explorer-token-balances' : us ? 'holder-snapshot' : null,
-      delta: us?.delta ?? null,
-    },
+    reserve: null,
     // The gap to the rung directly above us is the call to action.
-    nextRung: us ? rungFor(us.rank - 1) : rungFor(wallets.length >= 10 ? 10 : wallets.length),
-    ladder: [1, 3, 5, 10].map(rungFor).filter(Boolean),
+    nextRung: null,
+    ladder: [],
     wallets: wallets.slice(0, 40),
     // Every wallet, compact, so "where am I" is an instant client-side lookup
     // instead of another round trip per visitor. 350 rows is ~15 KB gzipped.
@@ -140,6 +107,12 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
     pools: pools.sort((a, b) => b.xmr - a.xmr).slice(0, 5),
   }
 
+  const tracked=poolTracker(snapshot)
+  snapshot.reserve={...tracked.reserve,address:null,poolId:project.pool,raw:null,
+    balanceSource:'DexScreener canonical pool XMR quote',balanceCheckedAt:project.market?.checkedAt??null}
+  snapshot.nextRung=tracked.nextRung
+  snapshot.ladder=tracked.ladder
+
   if (!persist) return snapshot
 
   await fs.mkdir(DATA, { recursive: true })
@@ -147,6 +120,7 @@ export async function buildSnapshot({ persist = true, previous = null } = {}) {
 
   const history = await readJson(HISTORY, [])
   history.push({
+    trackedKind: 'lp',
     takenAt: snapshot.takenAt,
     reserveRank: snapshot.reserve.rank,
     reserveXmr: snapshot.reserve.xmr,

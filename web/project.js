@@ -102,7 +102,7 @@ export function renderProject(snapshot){
     document.querySelector('#fee').max=String(Math.max(chain.normalBuyFeeBps,chain.normalSellFeeBps)/100)
     document.querySelector('#live-fee-note').textContent=`Configured normal holder allocation: approximately ${chain.holderAllocationPct.toFixed(4)}% of buy volume, before processing adjustments. Use the button to apply it to the simulator.`
     document.querySelector('.thesis > .plan-note').textContent=`Normal buy fee: ${(chain.normalBuyFeeBps/100).toFixed(2)}%. Normal sell fee: ${(chain.normalSellFeeBps/100).toFixed(2)}%. Read from the pool’s fee hook; see Dividends for the split.`
-    document.querySelectorAll('.mechanics article p')[0].textContent='The team-designated reserve wallet accumulates XMR with rewards. Reserve funding is tracked separately from the pool’s creator and holder fee allocations.'
+    document.querySelectorAll('.mechanics article p')[0].textContent='The XMR side of our MONEROCHAN/XMR pool is the reserve tracked here. Swaps move that balance up and down; holder payouts are a separate ledger.'
     document.querySelectorAll('.mechanics article p')[1].textContent='The token has an XMR dividend distributor. Credited rewards stream under the contract’s rules; only completed withdrawals count as paid.'
     document.querySelector('.treasury__split article:nth-child(2) small').textContent='Distributor connected. See Dividends for on-chain credited and paid totals.'
   }
@@ -116,7 +116,7 @@ export function renderProject(snapshot){
     line(`Eligible token supply at this block: ${amount(chain.eligibleSupplyRaw,chain.tokenDecimals,2)}. Total token supply: ${amount(chain.totalSupplyRaw,chain.tokenDecimals,2)}.`)
     line(`Normal fee split: ${(chain.platformShareBps/100).toFixed(2)}% platform, ${(chain.creatorShareBps/100).toFixed(2)}% creator, ${(chain.holderShareBps/100).toFixed(2)}% holders. These percentages are shares of the fee, before processing adjustments.`)
     link('Configured creator recipient ↗',explorer+'/address/'+chain.creatorRecipient)
-    line('The creator recipient is a separate address from the published reserve. This page does not assume an automatic fixed-percentage transfer to the reserve.')
+    line('Creator fees are separate from LP liquidity. Changes to the pool’s XMR balance are not themselves dividend payments.')
     line(`Payout source: totalWithdrawn(). Credit source: totalDistributed(). Accounted asset: ${chain.payoutToken}.`)
   }
   if(volume?.complete&&chain){

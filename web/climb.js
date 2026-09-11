@@ -7,6 +7,7 @@
 
 import { renderReserve } from './reserve.js'
 import { formatUsd } from './format.js'
+import { poolTracker } from './pool-tracker.js'
 
 const $ = (id) => document.getElementById(id)
 
@@ -44,7 +45,7 @@ let view = 'reserve'
 let targetKey = null
 let wheelOffset = 0
 
-const data = () => sim ?? live
+const data = () => sim ?? poolTracker(live)
 
 /* ---------- format ---------- */
 
@@ -211,7 +212,8 @@ function buildRows(d) {
   const existing = list.find((r) => r.key === resKey)
   if (existing) {
     existing.us = true
-    existing.label = 'OUR RESERVE'
+    existing.label = res.kind==='pool'?'OUR LP · XMR':'OUR RESERVE'
+    existing.comparison=res.kind==='pool'
   } else {
     list.push({
       key: resKey,
@@ -220,7 +222,8 @@ function buildRows(d) {
       xmr: res.deployed ? res.xmr : 0,
       delta: res.delta,
       us: true,
-      label: 'OUR RESERVE',
+      label: res.kind==='pool'?'OUR LP · XMR':'OUR RESERVE',
+      comparison:res.kind==='pool',
       pending: !res.deployed,
     })
   }
@@ -240,7 +243,7 @@ function buildRows(d) {
     })
   }
 
-  list.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
+  list.sort((a, b) => res.kind==='pool' ? (b.xmr??-1)-(a.xmr??-1) : (a.rank ?? Infinity) - (b.rank ?? Infinity))
   const anchor = sim || view==='reserve' ? list.findIndex(r=>r.us) : view==='me' ? list.findIndex(r=>r.me) : 2
   const center = Math.max(0,Math.min(list.length-1,Math.max(0,anchor)+wheelOffset))
   const previousButton=document.querySelector('.wheel-controls [data-step="-1"]')
@@ -292,7 +295,7 @@ function renderRows(d) {
       el.removeAttribute('aria-label')
     }
 
-    el.querySelector('.row__rank').textContent = r.rank == null ? '—' : `#${r.rank}`
+    el.querySelector('.row__rank').textContent = r.rank == null ? '—' : `${r.comparison?'≈':''}#${r.rank}`
 
     const chip = el.querySelector('.chip')
     chip.style.background =
@@ -384,7 +387,7 @@ function renderTarget(d) {
     return
   }
   const [addr, rank, xmr] = row
-  const have = me?.xmr ?? 0
+  const have = view==='reserve' ? d.reserve.xmr??0 : me?.xmr??0
   const need = Math.max(0, xmr - have)
   const passed = need <= 0
 
@@ -625,7 +628,7 @@ async function load() {
       const summary=document.querySelector('.mission-personal summary')
       if(summary)summary.textContent=me?.kind==='wallet'?`Your wallet · #${me.rank}`:'Find your wallet'
     }
-    if (!sim) render(live)
+    if (!sim) render(data())
   } catch {
     els.status.dataset.state = 'error'
     els.statusText.textContent = 'cannot reach the chain'
@@ -650,14 +653,15 @@ function stopSim() {
   els.simBtn.setAttribute('aria-pressed', 'false')
   els.simBtn.textContent = 'Preview the climb'
   setPose('hold')
-  render(live)
+  render(data())
 }
 
 function startSim() {
   if (!live) return
-  sim = structuredClone(live)
+  sim = structuredClone(poolTracker(live))
   sim.reserve = {
-    address: '0x0000000000000000000000000000000000000000',
+    kind: 'pool',
+    address: live.project.pool,
     deployed: true,
     rank: null,
     xmr: (live.wallets[9]?.xmr ?? 0) * 0.999,
@@ -730,7 +734,7 @@ window.addEventListener('track-reserve',()=>{
 
 const wheelControls=document.createElement('div')
 wheelControls.className='wheel-controls'
-wheelControls.innerHTML='<button type="button" data-step="-1" aria-label="Previous wallet">↑</button><button type="button" data-step="0">Follow reserve</button><button type="button" data-step="1" aria-label="Next wallet">↓</button>'
+wheelControls.innerHTML='<button type="button" data-step="-1" aria-label="Previous wallet">↑</button><button type="button" data-step="0">Follow pool</button><button type="button" data-step="1" aria-label="Next wallet">↓</button>'
 els.board.after(wheelControls)
 els.simBtn.disabled=true
 for(const button of wheelControls.querySelectorAll('button'))button.disabled=true

@@ -1,10 +1,11 @@
 import { missionProgress, updateJournal } from './mission-state.js'
+import { poolTracker } from './pool-tracker.js'
 
 let latest=null
 let entries=[]
 let undoEntries=null
 let undoTimer=null
-const storageKey='monerochan.mission-observations.v1'
+const storageKey='monerochan.lp-observations.v1'
 try { entries=JSON.parse(localStorage.getItem(storageKey)??'[]') } catch { entries=[] }
 
 export function mountMission(climb) {
@@ -14,7 +15,9 @@ export function mountMission(climb) {
   card.setAttribute('aria-label','Shared reserve mission')
   card.innerHTML='<div class="mission-title"><strong>One reserve. Same side.</strong><span>GOAL #1</span></div><div class="mission-reading"><span id="mission-rank">Reading the reserve…</span><span id="mission-balance">— XMR</span></div><p id="mission-next" aria-live="polite">Waiting for the first snapshot.</p><ol id="mission-checkpoints" aria-label="Current rank checkpoints"></ol><p id="mission-source">Selected XMR on Hood · known pools excluded</p>'
   climb.querySelector('.climb__head').after(card)
-  climb.querySelector('.climb__lede').textContent='Our shared mission: follow the reserve to the top of Hood’s XMR holder board.'
+  climb.querySelector('.climb__lede').textContent='Follow the XMR in our liquidity pool as trades move it up and down.'
+  card.querySelector('.mission-title strong').textContent='Our pool’s XMR liquidity.'
+  card.querySelector('.mission-title > span').textContent='COMPARISON RANK'
 
   const toolbar=document.createElement('div')
   toolbar.className='mission-tools'
@@ -39,7 +42,7 @@ export function mountMission(climb) {
   const journal=document.createElement('details')
   journal.id='mission-journal'
   journal.className='mission-more'
-  journal.innerHTML='<summary>Your expedition journal</summary><p>Observed on this device only. Balance changes are not necessarily purchases. Preview animations are never recorded here.</p><ol id="mission-observations"></ol><button type="button" id="clear-observations">Clear local journal</button>'
+  journal.innerHTML='<summary>Your expedition journal</summary><p>Reported LP liquidity observed on this device only. Comparison ranks are not explorer wallet ranks. Preview animations are never recorded here.</p><ol id="mission-observations"></ol><button type="button" id="clear-observations">Clear local journal</button>'
   facts.before(journal)
   const clearButton=journal.querySelector('button')
   clearButton.addEventListener('click',()=>{
@@ -77,13 +80,14 @@ function drawJournal(){
     time.dateTime=entry.at
     time.textContent=new Date(entry.at).toLocaleString()
     const text=document.createElement('span')
-    text.textContent=`${entry.xmr.toFixed(4)} XMR · ${entry.rank===null?'unranked':'rank #'+entry.rank}`
+    text.textContent=`${entry.xmr.toFixed(4)} XMR · ${entry.rank===null?'unranked':(entry.kind==='pool'?'comparison ≈#':'rank #')+entry.rank}`
     li.append(time,text)
     list.append(li)
   })
 }
 
 export function renderMission(snapshot){
+  snapshot=poolTracker(snapshot)
   latest=snapshot
   const card=document.querySelector('#mission-card')
   if(!card)return
@@ -102,7 +106,7 @@ export function renderMission(snapshot){
   }
   card.dataset.completed=String(progress.completed)
   const source=document.querySelector('#mission-source')
-  source.textContent=`Filtered holder rank · known pools excluded${snapshot.reserve.allAddressRank?' · all-address rank #'+snapshot.reserve.allAddressRank:''} · `+new Date(snapshot.takenAt).toLocaleTimeString()
+  source.textContent='LP reported by DexScreener · ≈ rank compares against filtered holders, not an explorer wallet rank · '+new Date(snapshot.takenAt).toLocaleTimeString()
   entries=updateJournal(entries,snapshot)
   try{localStorage.setItem(storageKey,JSON.stringify(entries))}catch{}
   drawJournal()
